@@ -1,27 +1,12 @@
-import bgVideo from '../media/credia2.mp4';
-import phoneBg from '../media/phone_poster.png';
-import NewBg from '../media/NewBg.webp';
-import AgentSpline from '../Agent3D/AgentSpline';
+import NewBg from '../media/NewBg.png';
+import Navbar from '../Navbar/Navbar';
+import Caption from './Caption';
 
 function Home() {
   return (
-    <div className="h-screen w-screen overflow-hidden">
-      <img
-        src={NewBg}
-        alt="Background"
-        className="w-full h-full object-contain"
-      />
-
-      {/* <video
-        className="col-start-1 row-start-1 h-full w-full object-cover hidden md:block"
-        src={bgVideo}
-        autoPlay
-        loop
-        muted
-        playsInline
-      /> */}
-
-      {/* <AgentSpline /> */}
+    <div className="text-white min-h-screen w-full bg-cover bg-center bg-no-repeat flex flex-col"  style={{ backgroundImage: `url(${NewBg})` }}  >
+      <Navbar />
+      <Caption />
     </div>
   );
 }

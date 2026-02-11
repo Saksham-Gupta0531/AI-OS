@@ -3,11 +3,11 @@ export default function AgentSpline() {
     <div
       className="
         absolute
-        top-[-25px]
-        right-[-148px]
+        top-[550px]
+        right-[-150px]
         z-50
-        w-[400px]
-        h-[400px]
+        w-[350px]
+        h-[350px]
         pointer-events-auto
       "
     >
