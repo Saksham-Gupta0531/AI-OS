@@ -1,6 +1,6 @@
 function Caption() {
     return (
-        <div className="w-full flex justify-center font-sans">
+        <div className="h-[30vh] w-full flex justify-center font-sans">
             <div className="relative w-full max-w-2xl flex flex-col items-center justify-center py-10">
                 <div className="absolute top-3 left-0 w-6 h-6 border-t-[1.5px] border-l-[1.5px] border-white"></div>          
                 <h2 className="text-5xl md:text-4xl font-bold text-white tracking-tight mb-6 text-center">

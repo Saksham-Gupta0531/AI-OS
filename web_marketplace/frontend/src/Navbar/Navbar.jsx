@@ -1,6 +1,6 @@
 function Navbar() {
     return (
-        <nav className="text-white w-full h-[12vh] flex font-sans">
+        <nav className="text-white w-full h-[12vh] flex font-sans fixed">
             
             <div className="part-I w-[20%] h-full flex justify-end items-center text-3xl font-medium tracking-tight">
                 AI OS
@@ -8,7 +8,7 @@ function Navbar() {
             
             <div className="part-II w-[60%] h-full flex justify-center items-center">
                 <ul className="flex gap-10 text-md text-[#AFAFAF] font-medium">
-                    <li className="hover:text-white cursor-pointer transition-colors duration-200">Home</li>
+                    <li className="hover:text-white cursor-pointer transition-colors duration-200">Agents</li>
                     <li className="hover:text-white cursor-pointer transition-colors duration-200">Packages</li>
                     <li className="hover:text-white cursor-pointer transition-colors duration-200">Documents</li>
                     <li className="hover:text-white cursor-pointer transition-colors duration-200">Contact</li>
