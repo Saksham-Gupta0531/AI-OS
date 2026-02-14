@@ -4,6 +4,8 @@ import NewBg from '../media/NewBg.png';
 import Navbar from '../Navbar/Navbar';
 import Caption from './Caption';
 import Services from './Services';
+import RobotEyes from './RobotEyes';
+import NeuralBackground from './NeuralBackground';
 
 function Home() {
   const containerRef = useRef(null);
@@ -13,8 +15,8 @@ function Home() {
     offset: ["start start", "end start"]
   });
 
-  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
-  const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.3]);
+  const scrollScale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
+  const scrollOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.3]);
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -25,18 +27,31 @@ function Home() {
       <div className="sticky top-0 h-screen w-full -z-10 overflow-hidden bg-[#050505]">
 
         <motion.div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat -z-10"
+          className="absolute inset-0 w-full h-full -z-10"
           style={{
-            backgroundImage: `url(${NewBg})`,
-            scale: scale,     
-            opacity: opacity  
+            scale: scrollScale,
+            opacity: scrollOpacity
           }}
-        />
+        >
+          <div
+            className="w-full h-full bg-cover bg-center bg-no-repeat relative"
+            style={{ backgroundImage: `url(${NewBg})` }}
+          >
+            <RobotEyes
+              color="#0E100E"
+              className="top-[48%] right-[24%] md:right-[46%]"
+            />
+          </div>
+        </motion.div>
+
+        <div className="absolute inset-0 z-0 opacity-60">
+          <NeuralBackground />
+        </div>
 
         <div className="absolute bottom-0 w-full h-40 bg-gradient-to-t from-black to-transparent opacity-90 -z-10" />
 
         <div className="relative z-10 w-full flex flex-col pt-20">
-            <Caption />
+          <Caption />
         </div>
 
       </div>
