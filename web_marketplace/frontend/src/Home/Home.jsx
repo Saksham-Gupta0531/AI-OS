@@ -39,7 +39,7 @@ function Home() {
           >
             <RobotEyes
               color="#0E100E"
-              className="top-[48%] right-[24%] md:right-[46%]"
+              className="top-[47.5%] right-[24%] md:right-[45.5%]"
             />
           </div>
         </motion.div>
