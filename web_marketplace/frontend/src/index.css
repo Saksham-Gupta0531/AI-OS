@@ -1,1 +1,14 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  cursor: none !important;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+}
+
+
