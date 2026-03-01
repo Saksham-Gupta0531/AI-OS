@@ -5,14 +5,14 @@ from enum import Enum
 from dataclasses import dataclass, field
 from typing import Dict, Any
 
-from .agents import get_agent # Now importing the dynamic registry
+from .agents import get_agent
 from .memory import MemoryManager
 from .security import SecurityManager
 
 class TaskPriority(Enum):
-    CRITICAL = 0   # User commands
-    HIGH = 1       # Agent sub-tasks
-    BACKGROUND = 2 # File indexing, cleanup
+    CRITICAL = 0
+    HIGH = 1
+    BACKGROUND = 2
 
 @dataclass(order=True)
 class Task:
@@ -31,9 +31,12 @@ class Orchestrator:
         self.MAX_RETRIES = 3
 
     def submit_task(self, task_id: str, agent_type: str, payload: dict, priority: TaskPriority = TaskPriority.HIGH):
+        if "session_id" not in payload:
+            payload["session_id"] = "default_session"
+
         task = Task(priority=priority.value, task_id=task_id, agent_type=agent_type, payload=payload)
         self.task_queue.put(task)
-        print(f"[Queue] Task {task_id} added for {agent_type}.")
+        print(f"[Queue] Task {task_id} added (Session: {payload['session_id']}).")
 
     def start(self):
         thread = threading.Thread(target=self._run_loop, daemon=True)
@@ -53,39 +56,35 @@ class Orchestrator:
     def _execute_agent(self, task: Task):
         print(f"\n[Processing] Task: {task.task_id} | Agent: {task.agent_type}")
 
-        # 1. Concurrency Check
         target_file = task.payload.get('file_path')
         if target_file:
             if not self.memory.acquire_lock(target_file, task.agent_type):
-                print(f"[Lock] File {target_file} is locked. Re-queueing task.")
                 time.sleep(1) 
                 self.task_queue.put(task)
                 return
 
         try:
-            # 2. Fetch the correct agent from the Registry
             agent_instance = get_agent(task.agent_type)
             if not agent_instance:
                 raise ValueError(f"Unknown agent type requested: {task.agent_type}")
 
+            session_id = task.payload["session_id"]
+            task.payload["history"] = self.memory.get_chat_history(session_id)
+        
             prompt_preview = task.payload.get('prompt', '')[:50]
+            print(f"[Memory] Loaded {len(task.payload['history'])} previous messages for '{session_id}'.")
             print(f"[Agent Runtime] Executing logic for prompt: '{prompt_preview}...'")
             
-            # 3. Execute the agent's specific logic (which handles its own LLM calls)
             response = agent_instance.execute(task.payload)
-            
-            print(f"[Result] Task {task.task_id} completed. Response length: {len(response)} chars")
             
             task.payload['result'] = response
 
-            # 4. Update memory context
-            self.memory.update_context("last_action", {
-                "task_id": task.task_id, 
-                "agent": task.agent_type,
-                "status": "success"
-            })
-
-            # For testing purposes, print the actual output
+            user_prompt = task.payload.get("prompt", "")
+            if user_prompt: 
+                self.memory.append_chat_message(session_id, task.agent_type, "user", user_prompt)
+            
+            self.memory.append_chat_message(session_id, task.agent_type, "assistant", response)
+        
             print("-" * 40)
             print(response)
             print("-" * 40)
@@ -94,7 +93,6 @@ class Orchestrator:
             print(f"[Error] Task {task.task_id}: {str(e)}")
             if task.retry_count < self.MAX_RETRIES:
                 task.retry_count += 1
-                print(f"[Retry] Retrying... ({task.retry_count}/{self.MAX_RETRIES})")
                 self.task_queue.put(task)
             else:
                 print(f"[Failed] Task {task.task_id} failed after max retries.")
