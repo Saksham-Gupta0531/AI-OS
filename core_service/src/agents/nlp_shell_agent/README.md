@@ -2,8 +2,7 @@
 
 ## Overview
 
-This module implements a **Natural Language Interface for CLI commands** in the AI-OS system.
-It allows users to enter natural language queries which are converted into **Linux shell commands**.
+The **Natural Language Shell Agent** enables users to interact with the system using natural language instead of traditional CLI commands.
 
 Example:
 
@@ -13,21 +12,23 @@ list files
 Predicted Command:
 ls
 
+The agent converts natural language queries into appropriate **Linux shell commands** using a semantic similarity model.
+
 ---
 
-## Current Progress
+# Current Implementation
 
-The following components have been implemented:
+This module currently includes:
 
 * Dataset preparation using **NL2Bash**
 * Dataset cleaning and preprocessing
 * Training a semantic retrieval model using **SentenceTransformers**
 * Command prediction using **Nearest Neighbour similarity**
-* Basic testing script for querying the model
+* Testing script for querying the model
 
 ---
 
-## Model Pipeline
+# Model Pipeline
 
 Natural Language Query
 ↓
@@ -39,12 +40,13 @@ Closest Matching Bash Command
 
 ---
 
-## Folder Structure
+# Project Structure
 
 ```
 nl_shell_agent/
 │
 ├── training/
+│   ├── download_dataset.py
 │   ├── clean_dataset.py
 │   └── train_model.py
 │
@@ -56,7 +58,53 @@ nl_shell_agent/
 
 ---
 
-## How to Run
+# Rebuilding the Model
+
+The dataset is **not stored in the repository** to keep the repo lightweight.
+
+To regenerate the model, follow these steps.
+
+### 1. Download Dataset
+
+Run:
+
+```
+python training/download_dataset.py
+```
+
+This downloads the **NL2Bash dataset**.
+
+---
+
+### 2. Clean Dataset
+
+Run:
+
+```
+python training/clean_dataset.py
+```
+
+This removes rare command patterns and prepares the dataset.
+
+---
+
+### 3. Train the Model
+
+Run:
+
+```
+python training/train_model.py
+```
+
+After training, the model file will be created:
+
+```
+model/nlp_cli_model.pkl
+```
+
+---
+
+# Running the Model
 
 Activate the virtual environment and run:
 
@@ -73,9 +121,40 @@ Predicted command: find . -name "*.txt"
 
 ---
 
-## Next Steps
+# Dependencies
 
-* Create **predictor module** for model inference
-* Convert the model into an **AI-OS agent**
-* Integrate the agent with the **core service**
+Required Python libraries:
+
+```
+pandas
+scikit-learn
+sentence-transformers
+torch
+numpy
+requests
+```
+
+Install them using:
+
+```
+pip install -r requirements.txt
+```
+
+---
+
+# Next Steps
+
+Planned improvements for this module:
+
+* Create **predictor module** for inference
+* Convert the model into a **CLI agent**
+* Register the agent inside **AI-OS**
 * Add **command safety filtering**
+* Integrate the agent with **core_service**
+
+---
+
+# Author
+
+Rachit Upadhyay
+AI-OS Project – Natural Language Shell Agent
