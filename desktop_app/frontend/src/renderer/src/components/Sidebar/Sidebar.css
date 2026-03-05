@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Rajdhani:wght@300;400;500&display=swap');
+
+.sidebar-wrap {
+    font-family: 'Rajdhani', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar-wrap::before,
+.sidebar-wrap::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+}
+.sidebar-wrap::before {
+    top: 8px;
+    left: 8px;
+    opacity: 0.35;
+}
+.sidebar-wrap::after {
+    bottom: 8px;
+    right: 8px;
+    opacity: 0.35;
+}
+
+
+.menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.75;
+    transition: opacity 0.2s ease;
+}
+.menu-btn:hover {
+    opacity: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    border: 1px solid transparent;
+    position: relative;
+}
+.nav-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: currentColor;
+    transform: scaleY(0);
+    transition: transform 0.25s ease;
+    border-radius: 0 1px 1px 0;
+    opacity: 0.8;
+}
+.nav-item:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+}
+.nav-item:hover::before {
+    transform: scaleY(1);
+}
