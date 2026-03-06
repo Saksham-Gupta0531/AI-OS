@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, ChevronUp, Bot, Cpu, Check } from "lucide-react";
 import "./Prompt.css";
+import PromptApi from './PromptApi';
 
 const agents = [
   { id: "architect", name: "Architect Agent", desc: "System design & planning" },
@@ -18,16 +19,16 @@ const models = [
 
 function Dropdown({ open, onClose, children }) {
   const ref = useRef();
-  
+
   useEffect(() => {
     if (!open) return;
-    const handler = (e) => { 
-      if (ref.current && !ref.current.contains(e.target)) onClose(); 
+    const handler = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) onClose();
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [open, onClose]);
-  
+
   return <div ref={ref} style={{ position: "relative" }}>{children}</div>;
 }
 
@@ -40,16 +41,21 @@ function Prompt() {
   const textareaRef = useRef();
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) { 
-      e.preventDefault(); 
-      handleSend(); 
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   };
-  
-  const handleSend = () => { 
+
+  const handleSend = () => {
     if (text.trim()) {
-      console.log("Sending:", text, "with", selectedAgent.name, "and", selectedModel.name);
-      setText(""); 
+      const PromptData = {
+        prompt: text,
+        selectedAgent: selectedAgent.name,
+        selectedModel: selectedModel.name
+      }
+      PromptApi(PromptData)
+      setText("");
     }
   };
 
@@ -63,7 +69,6 @@ function Prompt() {
   return (
     <div className="prompt-root">
       <div className="prompt-toolbar">
-        {/* LEFT — Agent selector */}
         <Dropdown open={agentOpen} onClose={() => setAgentOpen(false)}>
           <div
             className={`dd-trigger ${agentOpen ? "open" : ""}`}
@@ -93,7 +98,6 @@ function Prompt() {
           )}
         </Dropdown>
 
-        {/* RIGHT — Model selector */}
         <Dropdown open={modelOpen} onClose={() => setModelOpen(false)}>
           <div
             className={`dd-trigger ${modelOpen ? "open" : ""}`}
@@ -131,7 +135,7 @@ function Prompt() {
         <textarea
           ref={textareaRef}
           className="prompt-textarea"
-          placeholder="// Enter your prompt... (Shift+Enter for new line)"
+          placeholder="Enter your prompt... (Shift+Enter for new line)"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
