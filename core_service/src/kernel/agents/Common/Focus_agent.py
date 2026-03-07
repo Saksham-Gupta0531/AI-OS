@@ -6,7 +6,6 @@ import pyautogui
 import logging
 from kernel.brain import ask_llama3
 
-# Set the overall OS theme for the popups
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
 
