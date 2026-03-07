@@ -10,14 +10,24 @@ if not api_key:
 
 client = Groq(api_key=api_key)
 
-def ask_llama3(prompt, system_role="You are a helpful AI OS assistant."):
+# Added the 'history' parameter here
+def ask_llama3(prompt, system_role="You are a helpful AI OS assistant.", history=None):
+    if history is None:
+        history = []
+        
     try:
+        # 1. Start with the system instructions
+        messages = [{"role": "system", "content": system_role}]
+        
+        # 2. Inject all the previous messages (the Sidebar memory!)
+        messages.extend(history)
+        
+        # 3. Add the brand new prompt from the user
+        messages.append({"role": "user", "content": prompt})
+
         completion = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
-            messages=[
-                {"role": "system", "content": system_role},
-                {"role": "user", "content": prompt}
-            ],
+            messages=messages, 
             temperature=0.5,  
             max_tokens=1024, 
             top_p=1,

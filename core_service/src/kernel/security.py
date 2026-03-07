@@ -54,7 +54,6 @@ class SecurityManager:
         user_input = input("Allow this? (y/n): ")
         
         if user_input.lower() == 'y':
-            # Actually run it now
             os.system(command) 
             return "Command executed."
         else:
