@@ -1,35 +1,22 @@
-from kernel.orchestrator import Orchestrator, TaskPriority
-import time
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from api import agents, sessions
 
-os_kernel = Orchestrator()
-os_kernel.start()
+app = FastAPI(title="AI-OS Core Service")
 
-os_kernel.submit_task(
-    task_id="CHAT_001",
-    agent_type="ArchitectAgent",
-    payload={
-        "session_id": "chat_app_project_123",
-        "action": "init",
-        "prompt": "I want to build a real-time chat app with 10k users."
-    },
-    priority=TaskPriority.CRITICAL
+# Allow Electron (Localhost) to communicate with this API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-time.sleep(10)
+app.include_router(agents.router, prefix="/api/agents")
+app.include_router(sessions.router, prefix="/api/sessions")
 
-os_kernel.submit_task(
-    task_id="CHAT_002",
-    agent_type="ArchitectAgent",
-    payload={
-        "session_id": "chat_app_project_123",
-        "action": "init",
-        "prompt": "Actually, change the database to PostgreSQL instead."
-    },
-    priority=TaskPriority.CRITICAL
-)
-
-try:
-    while True:
-        time.sleep(1)
-except KeyboardInterrupt:
-    print("\nShutting down AI-OS...")
+if __name__ == "__main__":
+    # Start the kernel logic thread
+    print("Initializing AI-OS Kernel...")
+    uvicorn.run(app, host="127.0.0.1", port=8111)
