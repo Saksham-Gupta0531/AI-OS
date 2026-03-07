@@ -5,14 +5,14 @@ from enum import Enum
 from dataclasses import dataclass, field
 from typing import Dict, Any
 
+from .agents import get_agent
 from .memory import MemoryManager
 from .security import SecurityManager
-from .brain import ask_llama3  
 
 class TaskPriority(Enum):
-    CRITICAL = 0   # User commands
-    HIGH = 1       # Agent sub-tasks
-    BACKGROUND = 2 # File indexing, cleanup
+    CRITICAL = 0
+    HIGH = 1
+    BACKGROUND = 2
 
 @dataclass(order=True)
 class Task:
@@ -31,13 +31,14 @@ class Orchestrator:
         self.MAX_RETRIES = 3
 
     def submit_task(self, task_id: str, agent_type: str, payload: dict, priority: TaskPriority = TaskPriority.HIGH):
-        """External entry point to add tasks."""
+        if "session_id" not in payload:
+            payload["session_id"] = "default_session"
+
         task = Task(priority=priority.value, task_id=task_id, agent_type=agent_type, payload=payload)
         self.task_queue.put(task)
-        print(f"[Queue] Task {task_id} added.")
+        print(f"[Queue] Task {task_id} added (Session: {payload['session_id']}).")
 
     def start(self):
-        """Starts the kernel loop in a separate thread."""
         thread = threading.Thread(target=self._run_loop, daemon=True)
         thread.start()
         print("[System] AI-OS Orchestrator Kernel Running...")
@@ -48,52 +49,53 @@ class Orchestrator:
                 task = self.task_queue.get(timeout=1)
                 self._execute_agent(task)
                 self.task_queue.task_done()
-                time.sleep(3) 
+                time.sleep(1) 
             except queue.Empty:
                 continue
 
     def _execute_agent(self, task: Task):
-        print(f"[Processing] {task.task_id} (Agent: {task.agent_type})")
+        print(f"\n[Processing] Task: {task.task_id} | Agent: {task.agent_type}")
 
         target_file = task.payload.get('file_path')
         if target_file:
             if not self.memory.acquire_lock(target_file, task.agent_type):
-                print(f"[Lock] File {target_file} is locked. Re-queueing task.")
                 time.sleep(1) 
                 self.task_queue.put(task)
                 return
 
         try:
-            prompt_preview = task.payload.get('prompt', '')[:50]
-            print(f"[Groq-70B] Sending prompt: {prompt_preview}...")
-            
-            # Determine the System Role based on Agent Type
-            role = "You are a helpful AI Operating System assistant."
-            if task.agent_type == "DevAgent":
-                role = "You are an expert Developer Agent. Write only code."
-            elif task.agent_type == "StudentAgent":
-                role = "You are a helpful teacher. Explain concepts simply."
+            agent_instance = get_agent(task.agent_type)
+            if not agent_instance:
+                raise ValueError(f"Unknown agent type requested: {task.agent_type}")
 
-            response = ask_llama3(task.payload.get('prompt'), system_role=role)
+            session_id = task.payload["session_id"]
+            task.payload["history"] = self.memory.get_chat_history(session_id)
+        
+            prompt_preview = task.payload.get('prompt', '')[:50]
+            print(f"[Memory] Loaded {len(task.payload['history'])} previous messages for '{session_id}'.")
+            print(f"[Agent Runtime] Executing logic for prompt: '{prompt_preview}...'")
             
-            print(f"[Result] Answer received (length: {len(response)})")
+            response = agent_instance.execute(task.payload)
             
             task.payload['result'] = response
 
-            self.memory.update_context("last_action", {
-                "task_id": task.task_id, 
-                "agent": task.agent_type,
-                "status": "success"
-            })
+            user_prompt = task.payload.get("prompt", "")
+            if user_prompt: 
+                self.memory.append_chat_message(session_id, task.agent_type, "user", user_prompt)
+            
+            self.memory.append_chat_message(session_id, task.agent_type, "assistant", response)
+        
+            print("-" * 40)
+            print(response)
+            print("-" * 40)
 
         except Exception as e:
             print(f"[Error] Task {task.task_id}: {str(e)}")
             if task.retry_count < self.MAX_RETRIES:
                 task.retry_count += 1
-                print(f"[Retry] Retrying... ({task.retry_count}/{self.MAX_RETRIES})")
                 self.task_queue.put(task)
             else:
-                print("[Failed] Task failed after max retries.")
+                print(f"[Failed] Task {task.task_id} failed after max retries.")
 
         finally:
             if target_file:
