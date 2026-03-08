@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const { jwtVerify } = require("../common");
 const {
   signupSchema,
@@ -27,10 +28,10 @@ async function googleCallbackHandler(req, res) {
       maxAge: 60 * 60 * 1000,
     });
 
-    const frontendURL = process.env.NODE_ENV === 'production' 
-      ? 'https://dragend-h8cjcqdsfcc8gaex.centralindia-01.azurewebsites.net' 
+    const frontendURL = process.env.NODE_ENV === 'production'
+      ? 'https://dragend-h8cjcqdsfcc8gaex.centralindia-01.azurewebsites.net'
       : 'http://localhost:5173';
-      
+
     res.redirect(frontendURL);
   } catch (err) {
     return res.status(500).json({ msg: "Login failed", error: err.message });
@@ -55,7 +56,7 @@ async function loginHandler(req, res) {
 
     res.cookie("access_token", token, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       maxAge: 60 * 60 * 1000,
     });
@@ -159,7 +160,7 @@ async function profileHandler(req, res) {
 async function logoutHandler(req, res) {
   try {
     console.log("sid");
-    
+
     res.clearCookie("access_token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -224,11 +225,8 @@ async function createPasswordHandler(req, res) {
   }
 }
 async function deleteHandler(req, res) {
-  const id = req.params.username;
   try {
-    const user = await User.findOne({
-      username: id,
-    });
+    const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ msg: "Not found" });
     await user.deleteOne();
     res.json({ success: true, msg: "User deleted" });
