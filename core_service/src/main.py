@@ -1,58 +1,22 @@
-import os
-import sys
-import time
-import tkinter as tk
-from tkinter import simpledialog
-from kernel.orchestrator import Orchestrator, TaskPriority
-from kernel.agents.Common.Focus_agent import FocusGuardianAgent
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from api import agents, sessions
 
-def ask_user_goal():
-    """Dynamically asks the user for their focus goal before OS starts."""
-    root = tk.Tk()
-    root.withdraw() # Hide the main tk window
-    
-    goal = simpledialog.askstring("AI-OS Focus Agent", "What is your focus goal for this session? \n(e.g., Study GenAI, Watch Web Series, etc.)")
-    
-    if not goal: # If user cancels
-        root.destroy()
-        return None, None
-        
-    duration = simpledialog.askfloat("AI-OS Focus Agent", "For how many hours? \n(e.g., 2.5 or 3)", initialvalue=3.0)
-    root.destroy()
-    return goal, duration
+app = FastAPI(title="AI-OS Core Service")
 
-print("Initializing AI-OS...")
+# Allow Electron (Localhost) to communicate with this API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# 1. Ask for Focus Goal dynamically using Tkinter
-user_goal, duration_hours = ask_user_goal()
+app.include_router(agents.router, prefix="/api/agents")
+app.include_router(sessions.router, prefix="/api/sessions")
 
-if user_goal and duration_hours:
-    # 🚨 FIX: Yahan se memory_manager hata diya gaya hai!
-    focus_agent = FocusGuardianAgent(task_description=user_goal, duration_hours=duration_hours)
-    focus_agent.start()
-else:
-    print("[System] No goal specified. Focus Agent is disabled for this session.")
-
-# 2. Start AI-OS Kernel
-os_kernel = Orchestrator()
-os_kernel.start()
-
-# 3. Submit standard AI-OS tasks (Just for your background OS testing)
-# os_kernel.submit_task(
-#     task_id="CHAT_001",
-#     agent_type="ArchitectAgent",
-#     payload={
-#         "session_id": "chat_app_project_123",
-#         "action": "init",
-#         "prompt": "I want to build a real-time chat app with 10k users."
-#     },
-#     priority=TaskPriority.CRITICAL
-# )
-
-try:
-    while True:
-        time.sleep(1)
-except KeyboardInterrupt:
-    print("\nShutting down AI-OS...")
-    sys.exit(0)
-    
+if __name__ == "__main__":
+    # Start the kernel logic thread
+    print("Initializing AI-OS Kernel...")
+    uvicorn.run(app, host="127.0.0.1", port=8111)
