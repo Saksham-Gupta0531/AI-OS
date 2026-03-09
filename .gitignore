@@ -1,2 +1,4 @@
 myenv/
-Workflow/
+venv/
+__pycache__/
+*.pkl
