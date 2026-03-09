@@ -1,26 +1,22 @@
-from kernel.orchestrator import Orchestrator, TaskPriority
-import time
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from api import agents, sessions
 
+app = FastAPI(title="AI-OS Core Service")
 
-os_kernel = Orchestrator()
-os_kernel.start()
-
-os_kernel.submit_task(
-    task_id="USER_REQ_001",
-    agent_type="DevAgent",
-    payload={"prompt": "Fix the bug in main.py", "file_path": "main.py"},
-    priority=TaskPriority.CRITICAL
+# Allow Electron (Localhost) to communicate with this API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-os_kernel.submit_task(
-    task_id="SYS_INDEX_001",
-    agent_type="FileScout",
-    payload={"prompt": "Index all PDF files"},
-    priority=TaskPriority.BACKGROUND
-)
+app.include_router(agents.router, prefix="/api/agents")
+app.include_router(sessions.router, prefix="/api/sessions")
 
-try:
-    while True:
-        time.sleep(1)
-except KeyboardInterrupt:
-    print("Shutting down...")
+if __name__ == "__main__":
+    # Start the kernel logic thread
+    print("Initializing AI-OS Kernel...")
+    uvicorn.run(app, host="127.0.0.1", port=8111)

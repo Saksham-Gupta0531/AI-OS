@@ -3,3 +3,4 @@ __pycache__/
 *.pyo
 *.pyd
 .env
+ai_os_core.db
