@@ -1,5 +1,5 @@
-function PromptApi(props) {
-    const { prompt, selectedAgent, selectedModel } = props;
+function PromptApi(prompt) {
+    console.log(prompt);
     
 }
 export default PromptApi;
