@@ -99,4 +99,6 @@ class Orchestrator:
 
         finally:
             if target_file:
-                self.memory.release_lock(target_file, task.agent_type)
+                self.memory.release_lock(target_file, task.agent_type)    
+            if "completion_event" in task.payload:
+                task.payload["completion_event"].set()
