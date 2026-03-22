@@ -1,0 +1,156 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap'); */
+
+.architect-container {
+    font-family: 'Share Tech Mono', monospace;
+}
+
+.cyber-tab {
+    position: relative;
+    padding: 8px 20px;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #4a7fa5;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+
+.cyber-tab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: transparent;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    border: 1px solid #1a3a4a;
+    transition: border-color 0.2s ease;
+}
+
+.cyber-tab:hover {
+    color: #00fff7;
+}
+
+.cyber-tab:hover::before {
+    border-color: #00fff760;
+}
+
+.cyber-tab.active {
+    color: #00fff7;
+    background: linear-gradient(180deg, #00fff710 0%, #00fff705 100%);
+    text-shadow: 0 0 8px #00fff7, 0 0 20px #00fff750;
+}
+
+.cyber-tab.active::before {
+    border-color: #00fff7;
+    box-shadow: 0 0 10px #00fff730, inset 0 0 10px #00fff710;
+}
+
+.cyber-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 8px;
+    right: 8px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00fff7, transparent);
+    box-shadow: 0 0 8px #00fff7;
+}
+
+.decorative-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, #00fff730, transparent);
+    margin-bottom: 10px;
+    margin-left: 8px;
+}
+
+.cyber-panel {
+    box-shadow: 0 0 20px #00fff710, inset 0 0 30px #00000060;
+}
+
+.scan-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 247, 0.015) 2px,
+            rgba(0, 255, 247, 0.015) 4px);
+    pointer-events: none;
+    border-radius: 4px;
+}
+
+.tab-watermark {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: #00fff720;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.content-panel {
+    animation: fadeSlide 0.25s ease forwards;
+    color: #a8d8e8;
+    text-shadow: 0 0 4px #00fff720;
+    line-height: 1.7;
+    font-family: 'Share Tech Mono', monospace;
+}
+
+@keyframes fadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.corner-tl,
+.corner-tr,
+.corner-bl,
+.corner-br {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+}
+
+.corner-tl {
+    top: -1px;
+    left: -1px;
+    border-top: 2px solid #00fff7;
+    border-left: 2px solid #00fff7;
+}
+
+.corner-tr {
+    top: -1px;
+    right: -1px;
+    border-top: 2px solid #00fff7;
+    border-right: 2px solid #00fff7;
+}
+
+.corner-bl {
+    bottom: -1px;
+    left: -1px;
+    border-bottom: 2px solid #00fff7;
+    border-left: 2px solid #00fff7;
+}
+
+.corner-br {
+    bottom: -1px;
+    right: -1px;
+    border-bottom: 2px solid #00fff7;
+    border-right: 2px solid #00fff7;
+}
