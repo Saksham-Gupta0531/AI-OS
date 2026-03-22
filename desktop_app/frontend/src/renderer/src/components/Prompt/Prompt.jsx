@@ -3,9 +3,10 @@ import { Send, ChevronUp, Bot, Cpu, Check } from "lucide-react";
 import "./Prompt.css";
 import PromptApi from './PromptApi';
 
-function Prompt() {
+function Prompt(props) {
   const [text, setText] = useState("");
   const textareaRef = useRef();
+  const { agentId, agentName } = props.agent;
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -15,8 +16,14 @@ function Prompt() {
   };
 
   const handleSend = () => {
+    const data = {
+      agentId: agentId,
+      agentName, agentName,
+      prompt: text,
+      sessionId: props.sessionId
+    }
     if (text.trim()) {
-      PromptApi(text)
+      PromptApi(data);
       setText("");
     }
   };
@@ -31,10 +38,7 @@ function Prompt() {
   return (
     <div className="prompt-root">
       <div className="prompt-box">
-        <textarea
-          ref={textareaRef}
-          className="prompt-textarea"
-          placeholder="Enter your prompt... (Shift+Enter for new line)"
+        <textarea ref={textareaRef} className="prompt-textarea" placeholder="Enter your prompt... (Shift+Enter for new line)"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}

@@ -26,17 +26,19 @@ class ArchitectAgent:
         prompt = payload.get("prompt", "")
         action = payload.get("action", "init")
 
+        history = payload.get("history", [])
+
         if action == "init":
             # Workflow 1: New Project
             full_prompt = f"Design a system architecture and folder structure for the following request: {prompt}"
-            return ask_llama3(full_prompt, system_role=self.system_role)
+            return ask_llama3(full_prompt, system_role=self.system_role, history=history)
             
         elif action == "analyze":
             # Workflow 2: Architecture Review
             # (Later, we will inject the output of fs_scanner.py here)
             project_tree = payload.get("project_tree", "No tree provided.")
             full_prompt = f"Review this project structure for anti-patterns and suggest refactoring:\n\n{project_tree}"
-            return ask_llama3(full_prompt, system_role=self.system_role)
+            return ask_llama3(full_prompt, system_role=self.system_role, history=history)
 
         else:
             return "Error: Unknown action for ArchitectAgent."

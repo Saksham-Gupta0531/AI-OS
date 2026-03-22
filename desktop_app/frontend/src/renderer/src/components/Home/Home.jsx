@@ -16,10 +16,6 @@ function Home() {
                     <Result />
                 </div>
 
-                <div className="flex-shrink-0 relative">
-                    <Prompt />
-                </div>
-
             </div>
 
         </div>
