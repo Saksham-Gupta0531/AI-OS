@@ -4,9 +4,11 @@ import "./Prompt.css";
 import PromptApi from './PromptApi';
 
 function Prompt(props) {
+function Prompt(props) {
   const [text, setText] = useState("");
   const [mode, setMode] = useState("industry");
   const textareaRef = useRef();
+  const { agentId, agentName } = props.agent;
   const { agentId, agentName } = props.agent;
 
   const handleKeyDown = (e) => {
