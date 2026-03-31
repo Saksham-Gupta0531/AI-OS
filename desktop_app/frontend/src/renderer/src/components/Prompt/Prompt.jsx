@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, ChevronUp, Bot, Cpu, Check } from "lucide-react";
+import { Send, ChevronDown } from "lucide-react";
 import "./Prompt.css";
 import PromptApi from './PromptApi';
 
 function Prompt(props) {
   const [text, setText] = useState("");
+  const [mode, setMode] = useState("industry");
   const textareaRef = useRef();
   const { agentId, agentName } = props.agent;
 
@@ -15,16 +16,24 @@ function Prompt(props) {
     }
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    if (!text.trim()) return;
     const data = {
       agentId: agentId,
-      agentName, agentName,
+      agentName: agentName, 
       prompt: text,
+      mode: mode,
       sessionId: props.sessionId
-    }
-    if (text.trim()) {
-      PromptApi(data);
-      setText("");
+    };
+    setText(""); 
+    try {
+      const res = await PromptApi(data);
+      
+      if (res && res.execution_result && props.onResponse) {
+          props.onResponse(res.execution_result);
+      }
+    } catch (error) {
+      console.error("Failed to fetch from AI OS:", error);
     }
   };
 
@@ -37,8 +46,24 @@ function Prompt(props) {
 
   return (
     <div className="prompt-root">
+      <div className="prompt-controls">
+        <div className="select-wrapper">
+          <select 
+            className="cyber-select" 
+            value={mode} 
+            onChange={(e) => setMode(e.target.value)}
+          >
+            <option value="industry">industry</option>
+            <option value="project">project</option>
+          </select>
+          <ChevronDown className="select-arrow" size={14} />
+        </div>
+      </div>
       <div className="prompt-box">
-        <textarea ref={textareaRef} className="prompt-textarea" placeholder="Enter your prompt... (Shift+Enter for new line)"
+        <textarea 
+          ref={textareaRef} 
+          className="prompt-textarea" 
+          placeholder="Enter your prompt... (Shift+Enter for new line)"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -49,7 +74,7 @@ function Prompt(props) {
           className={`send-btn ${text.trim() ? "active" : ""}`}
           onClick={handleSend}
         >
-          <Send />
+          <Send size={18} />
         </button>
       </div>
     </div>

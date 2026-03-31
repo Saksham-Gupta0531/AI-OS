@@ -5,7 +5,7 @@ from enum import Enum
 from dataclasses import dataclass, field
 from typing import Dict, Any
 
-from .agents import get_agent
+from agent_registry.registry import get_agents
 from .memory import MemoryManager
 from .security import SecurityManager
 
@@ -36,12 +36,10 @@ class Orchestrator:
 
         task = Task(priority=priority.value, task_id=task_id, agent_type=agent_type, payload=payload)
         self.task_queue.put(task)
-        print(f"[Queue] Task {task_id} added (Session: {payload['session_id']}).")
-
+        
     def start(self):
         thread = threading.Thread(target=self._run_loop, daemon=True)
         thread.start()
-        print("[System] AI-OS Orchestrator Kernel Running...")
 
     def _run_loop(self):
         while self.is_running:
@@ -54,8 +52,6 @@ class Orchestrator:
                 continue
 
     def _execute_agent(self, task: Task):
-        print(f"\n[Processing] Task: {task.task_id} | Agent: {task.agent_type}")
-
         target_file = task.payload.get('file_path')
         if target_file:
             if not self.memory.acquire_lock(target_file, task.agent_type):
@@ -64,7 +60,7 @@ class Orchestrator:
                 return
 
         try:
-            agent_instance = get_agent(task.agent_type)
+            agent_instance = get_agents(task.agent_type)
             if not agent_instance:
                 raise ValueError(f"Unknown agent type requested: {task.agent_type}")
 
@@ -72,9 +68,7 @@ class Orchestrator:
             task.payload["history"] = self.memory.get_chat_history(session_id)
         
             prompt_preview = task.payload.get('prompt', '')[:50]
-            print(f"[Memory] Loaded {len(task.payload['history'])} previous messages for '{session_id}'.")
-            print(f"[Agent Runtime] Executing logic for prompt: '{prompt_preview}...'")
-            
+          
             response = agent_instance.execute(task.payload)
             
             task.payload['result'] = response
@@ -85,17 +79,12 @@ class Orchestrator:
             
             self.memory.append_chat_message(session_id, task.agent_type, "assistant", response)
         
-            print("-" * 40)
-            print(response)
-            print("-" * 40)
+
 
         except Exception as e:
-            print(f"[Error] Task {task.task_id}: {str(e)}")
             if task.retry_count < self.MAX_RETRIES:
                 task.retry_count += 1
                 self.task_queue.put(task)
-            else:
-                print(f"[Failed] Task {task.task_id} failed after max retries.")
 
         finally:
             if target_file:

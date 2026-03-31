@@ -3,11 +3,11 @@ import asyncio
 import threading
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from src.kernel.orchestrator import Orchestrator, TaskPriority
+from core_service.src.kernel.orchestrator import Orchestrator, TaskPriority
 
+print('sid')
 
 router = APIRouter()
-
 os_kernel = Orchestrator()
 os_kernel.start()
 
@@ -15,18 +15,19 @@ class PromptRequest(BaseModel):
     agentId: int
     agentName: str
     prompt: str
+    mode: str = "industry"
     sessionId: str = "default_api_session"
 
 @router.post("/callAgent")
 async def process_agent_prompt(request: PromptRequest):
     try:
-        print(request)
         task_id = f"API_TASK_{uuid.uuid4().hex[:8]}"
         completion_event = threading.Event()
         payload = {
             "session_id": request.sessionId,
             "action": "init",
             "prompt": request.prompt,
+            "mode": request.mode,
             "completion_event": completion_event
         }
         
@@ -40,7 +41,7 @@ async def process_agent_prompt(request: PromptRequest):
         await asyncio.to_thread(completion_event.wait, timeout=120.0)
         
         execution_result = payload.get("result", "Error: Task timed out or failed to execute.")
-
+        print(execution_result)  
         return {
             "status": "success",
             "agent": request.agentName,
