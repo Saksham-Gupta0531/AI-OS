@@ -16,5 +16,4 @@ app.add_middleware(
 app.include_router(router, prefix="/api/v1")
 
 if __name__ == "__main__":
-    print("Initializing AI-OS Kernel...")
     uvicorn.run("src.api.main:app", host="0.0.0.0", port=8000, reload=True)

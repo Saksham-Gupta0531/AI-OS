@@ -4,8 +4,7 @@ import threading
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from core_service.src.kernel.orchestrator import Orchestrator, TaskPriority
-
-print('sid')
+from core_service.src.kernel.tools.Developer.cli_tool import execute_cli_command
 
 router = APIRouter()
 os_kernel = Orchestrator()
@@ -17,6 +16,10 @@ class PromptRequest(BaseModel):
     prompt: str
     mode: str = "industry"
     sessionId: str = "default_api_session"
+
+class ExecutionRequest(BaseModel):
+    command : str
+    target_directory: str
 
 @router.post("/callAgent")
 async def process_agent_prompt(request: PromptRequest):
@@ -41,7 +44,6 @@ async def process_agent_prompt(request: PromptRequest):
         await asyncio.to_thread(completion_event.wait, timeout=120.0)
         
         execution_result = payload.get("result", "Error: Task timed out or failed to execute.")
-        print(execution_result)  
         return {
             "status": "success",
             "agent": request.agentName,
@@ -49,6 +51,17 @@ async def process_agent_prompt(request: PromptRequest):
             "execution_result": execution_result
         }
 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post('/execute-cmd')
+async def executeCmd(request: ExecutionRequest):
+    try:
+        print(request)
+        result = await execute_cli_command(request.command, request.target_directory)
+        if result["status"] == "error":
+            return {"status":"error","output":result["output"]}
+        return {"status":"success","output":result["output"]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

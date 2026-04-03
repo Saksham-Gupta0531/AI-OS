@@ -1,6 +1,7 @@
 
 from core_service.src.kernel.agents.Developer.architect import ArchitectAgent
 
+
 AGENT_REGISTRY = {
     "architectagent": ArchitectAgent(),
 }

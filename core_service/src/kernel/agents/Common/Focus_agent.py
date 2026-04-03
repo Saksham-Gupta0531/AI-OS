@@ -195,7 +195,7 @@ Valid outputs ONLY: ALLOW or BLOCK
 
 
 if __name__ == "__main__":
-    test_goal = "I want to watch Gaming video on youtube for 2 hours"
+    test_goal = "I want to do DSA for 2 hours"
     print(f"Starting isolated test for goal: {test_goal}")
 
     agent = FocusGuardianAgent(

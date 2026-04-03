@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import mermaid from "mermaid";
 import "./ArchitectAgent.css";
+import ExecuteSetup from "./ExecuteSetup";
 import { Terminal, Layers, Box, Code2, Sparkles } from 'lucide-react';
 
 mermaid.initialize({
@@ -24,7 +25,14 @@ const MermaidViewer = ({ chart }) => {
     useEffect(() => {
         let cleanChart = chart ? chart.trim() : "";
 
-        cleanChart = cleanChart.replace(/\|>/g, '|');
+        // FIX 1: Remove the hallucinated `>` and pull the next line up
+        // This turns "A -->| text |> \n B" into "A -->| text | B"
+        cleanChart = cleanChart.replace(/\|>\s*/g, '| ');
+        
+        // FIX 2: Catch any standard pipes `|` that also broke onto a new line
+        // This turns "A -->| text | \n B" into "A -->| text | B"
+        cleanChart = cleanChart.replace(/\|\s*\n\s*/g, '| ');
+
         cleanChart = cleanChart.replace(/^(graph|flowchart)\s+LR/im, '$1 TD');
 
         if (cleanChart && containerRef.current) {
@@ -37,7 +45,8 @@ const MermaidViewer = ({ chart }) => {
                         containerRef.current.innerHTML = svg;
                     }
                 })
-                .catch(() => {
+                .catch((err) => {
+                    console.error("Mermaid parsing error:", err);
                     setHasError(true);
                 });
         }
@@ -74,6 +83,22 @@ const formatText = (text) => {
 };
 
 function ArchitectAgent({ agentData }) {
+    const [isSetupOpen, setIsSetupOpen] = useState(false);
+    const [targetDirectory, setTargetDirectory] = useState(null);
+
+    const handleSetUp = async () => {
+        try {
+            const path = await window.api.selectDirectory();
+            
+            if (path) {
+                setTargetDirectory({ path: path });
+                setIsSetupOpen(true);
+            }
+        } catch (error) {
+            console.error("Folder selection failed:", error);
+        }
+    };
+
     const content = useMemo(() => {
         const rawData = agentData?.execution_result || agentData?.result;
 
@@ -210,21 +235,21 @@ function ArchitectAgent({ agentData }) {
 
                     <section>
                         <div className="section-title">
-                             <Sparkles className="w-5 h-5 mr-2" /> CORE FEATURES
+                            <Sparkles className="w-5 h-5 mr-2" /> CORE FEATURES
                         </div>
                         <div className="p-2">{renderFeatures(content.features)}</div>
                     </section>
 
                     <section>
                         <div className="section-title">
-                             <Layers className="w-5 h-5 mr-2" /> TECH STACK
+                            <Layers className="w-5 h-5 mr-2" /> TECH STACK
                         </div>
                         <div className="p-2 font-sans">{renderTechStack(content.techStack)}</div>
                     </section>
 
                     <section>
                         <div className="section-title">
-                             <Terminal className="w-5 h-5 mr-2" /> CLI SETUP COMMANDS
+                            <Terminal className="w-5 h-5 mr-2" /> CLI SETUP COMMANDS
                         </div>
                         <div className="p-2">
                             {renderSetupCommands(content.setupCommands)}
@@ -233,14 +258,14 @@ function ArchitectAgent({ agentData }) {
 
                     <section>
                         <div className="section-title">
-                             <Box className="w-5 h-5 mr-2" /> CUSTOM INJECTIONS
+                            <Box className="w-5 h-5 mr-2" /> CUSTOM INJECTIONS
                         </div>
                         {renderCustomStructure(content.customStructure)}
                     </section>
 
                     <section>
                         <div className="section-title">
-                             <Code2 className="w-5 h-5 mr-2" /> SYSTEM TOPOLOGY
+                            <Code2 className="w-5 h-5 mr-2" /> SYSTEM TOPOLOGY
                         </div>
                         <div className="bg-[#00000040] p-4 rounded-md border border-[#00fff720]">
                             {content.diagram ? (
@@ -250,9 +275,20 @@ function ArchitectAgent({ agentData }) {
                             )}
                         </div>
                     </section>
-
                 </div>
             </div>
+            <div className="flex justify-end">
+                <button onClick={handleSetUp} className="cursor-pointer px-8 py-3 bg-[#00fff705] border border-[#00fff750] text-[#00fff7] font-['Orbitron'] tracking-widest uppercase text-sm font-bold rounded-sm transition-all duration-300 hover:bg-[#00fff720] hover:border-[#00fff7] hover:shadow-[0_0_15px_#00fff760] hover:text-white">
+                    Create Setup
+                </button>
+            </div>
+            {isSetupOpen && (
+                <ExecuteSetup
+                    commands={content.setupCommands}
+                    targetDirectory={targetDirectory}
+                    onClose={() => setIsSetupOpen(false)}
+                />
+            )}
         </div>
     );
 }

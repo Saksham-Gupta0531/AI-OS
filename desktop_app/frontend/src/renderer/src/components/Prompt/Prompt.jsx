@@ -4,11 +4,9 @@ import "./Prompt.css";
 import PromptApi from './PromptApi';
 
 function Prompt(props) {
-function Prompt(props) {
   const [text, setText] = useState("");
   const [mode, setMode] = useState("industry");
   const textareaRef = useRef();
-  const { agentId, agentName } = props.agent;
   const { agentId, agentName } = props.agent;
 
   const handleKeyDown = (e) => {
@@ -22,17 +20,17 @@ function Prompt(props) {
     if (!text.trim()) return;
     const data = {
       agentId: agentId,
-      agentName: agentName, 
+      agentName: agentName,
       prompt: text,
       mode: mode,
       sessionId: props.sessionId
     };
-    setText(""); 
+    setText("");
     try {
       const res = await PromptApi(data);
-      
+
       if (res && res.execution_result && props.onResponse) {
-          props.onResponse(res.execution_result);
+        props.onResponse(res.execution_result);
       }
     } catch (error) {
       console.error("Failed to fetch from AI OS:", error);
@@ -50,9 +48,9 @@ function Prompt(props) {
     <div className="prompt-root">
       <div className="prompt-controls">
         <div className="select-wrapper">
-          <select 
-            className="cyber-select" 
-            value={mode} 
+          <select
+            className="cyber-select"
+            value={mode}
             onChange={(e) => setMode(e.target.value)}
           >
             <option value="industry">industry</option>
@@ -62,9 +60,9 @@ function Prompt(props) {
         </div>
       </div>
       <div className="prompt-box">
-        <textarea 
-          ref={textareaRef} 
-          className="prompt-textarea" 
+        <textarea
+          ref={textareaRef}
+          className="prompt-textarea"
           placeholder="Enter your prompt... (Shift+Enter for new line)"
           value={text}
           onChange={(e) => setText(e.target.value)}
