@@ -12,7 +12,7 @@ from kernel.agents.Developer.architect import ArchitectAgent
 def show_main_menu():
     """Displays a terminal menu to select the AI-OS mode."""
     print("\n" + "="*45)
-    print(" AI-OS Startup Menu ")
+    print(" 🤖 AI-OS Startup Menu ")
     print("="*45)
     print("Select which agent you want to run:")
     print("  1. Focus Guardian Agent")
@@ -30,7 +30,7 @@ def show_main_menu():
 
 def ask_focus_goal():
     """Terminal prompts for the Focus Agent setup."""
-    print("\n---Focus Guardian Setup ---")
+    print("\n--- 🎯 Focus Guardian Setup ---")
     goal = input("What is your focus goal? (e.g., Study GenAI): ").strip()
     
     if not goal:
