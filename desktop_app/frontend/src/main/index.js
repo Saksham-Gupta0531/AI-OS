@@ -1,7 +1,10 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { exec } from 'child_process'
+import os from 'os'
+import fs from 'fs'
 
 app.disableHardwareAcceleration()
 
@@ -39,20 +42,71 @@ function createWindow() {
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   // Set app user model id for windows
   electronApp.setAppUserModelId('com.electron')
 
   // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  // Our IPC handler for native folder selection
+  ipcMain.handle('select-directory', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      properties: ['openDirectory']
+    })
+    if (canceled) {
+      return null
+    } else {
+      return filePaths[0] // Returns the absolute path string
+    }
+  })
+
+  // NEW: IPC handler for executing commands in an external terminal
+  ipcMain.handle('execute-in-terminal', async (event, payload) => {
+    // Destructure the new subDirectory property
+    const { commands, targetDirectory, subDirectory = '' } = payload;
+
+    // Determine the final path
+    let finalPath = targetDirectory;
+
+    if (subDirectory && subDirectory !== 'root') {
+      finalPath = join(targetDirectory, subDirectory);
+      // Create the folder if it does not exist
+      if (!fs.existsSync(finalPath)) {
+        fs.mkdirSync(finalPath, { recursive: true });
+      }
+    }
+
+    const chainedCommands = commands.join(' && ');
+
+    return new Promise((resolve, reject) => {
+      const platform = os.platform();
+      let cmdString = '';
+
+      if (platform === 'win32') {
+        // Change drive/dir to the finalPath
+        cmdString = `start cmd /k "cd /d ${finalPath} && ${chainedCommands}"`;
+      } else if (platform === 'darwin') {
+        cmdString = `osascript -e 'tell app "Terminal" to do script "cd ${finalPath} && ${chainedCommands}"'`;
+      } else {
+        cmdString = `x-terminal-emulator -e "bash -c \\"cd ${finalPath} && ${chainedCommands}; exec bash\\""`;
+      }
+
+      exec(cmdString, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`Execution error: ${error.message}`);
+          reject({ status: 'error', message: error.message });
+          return;
+        }
+        resolve({ status: 'success' });
+      });
+    });
+  });
 
   createWindow()
 
@@ -63,14 +117,9 @@ app.whenReady().then(() => {
   })
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// Quit when all windows are closed, except on macOS.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

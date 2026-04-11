@@ -4,3 +4,4 @@ __pycache__/
 *.pyd
 .env
 ai_os_core.db
+brain.py

@@ -1,8 +1,12 @@
-import { contextBridge } from 'electron'
+import { contextBridge, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
-// Custom APIs for renderer
-const api = {}
+const api = {
+  selectDirectory: () => ipcRenderer.invoke('select-directory'),
+  // Add subDirectory to the arguments
+  openTerminal: (commands, targetDirectory, subDirectory) =>
+    ipcRenderer.invoke('execute-in-terminal', { commands, targetDirectory, subDirectory })
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise
