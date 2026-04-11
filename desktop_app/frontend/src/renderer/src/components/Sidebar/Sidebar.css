@@ -1,6 +1,4 @@
-/* @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;500;600;700&display=swap'); */
 
-/* ─── Sidebar wrapper ─────────────────────────────────────── */
 .sidebar-wrap {
     font-family: 'Exo 2', sans-serif;
     position: relative;
@@ -16,7 +14,6 @@
     width: 64px;
 }
 
-/* ─── Cyberpunk border effects ────────────────────────────── */
 .border-top {
     position: absolute;
     top: 0; left: 0; right: 0;
@@ -42,7 +39,6 @@
     z-index: 5;
 }
 
-/* animated corner brackets */
 .sidebar-wrap::before,
 .sidebar-wrap::after {
     content: '';
@@ -62,7 +58,6 @@
     filter: drop-shadow(0 0 4px #4A9CAE);
 }
 
-/* ─── Content ─────────────────────────────────────────────── */
 .sidebar-content {
     position: relative;
     z-index: 2;
@@ -72,7 +67,6 @@
     padding: 0 10px;
 }
 
-/* ─── Header ──────────────────────────────────────────────── */
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -111,7 +105,6 @@
     text-shadow: 0 0 6px rgba(74, 156, 174, 0.7);
 }
 
-/* ─── Menu button ─────────────────────────────────────────── */
 .menu-btn {
     display: flex;
     align-items: center;
@@ -133,7 +126,6 @@
     filter: drop-shadow(0 0 5px rgba(141, 224, 236, 0.5));
 }
 
-/* ─── Divider ─────────────────────────────────────────────── */
 .sidebar-divider {
     height: 1px;
     flex-shrink: 0;
@@ -143,7 +135,6 @@
     margin: 2px 0;
 }
 
-/* ─── Nav list ────────────────────────────────────────────── */
 .nav-list {
     display: flex;
     flex-direction: column;
@@ -152,7 +143,6 @@
     flex: 1;
 }
 
-/* ─── Nav items ───────────────────────────────────────────── */
 .nav-item {
     display: flex;
     align-items: center;
@@ -174,7 +164,6 @@
     transition: all 0.2s ease;
 }
 
-/* left glow bar */
 .nav-item::before {
     content: '';
     position: absolute;
@@ -188,7 +177,6 @@
     opacity: 0.9;
 }
 
-/* shimmer sweep */
 .nav-item::after {
     content: '';
     position: absolute;
@@ -215,13 +203,11 @@
     filter: drop-shadow(0 0 3px rgba(141, 224, 236, 0.4));
 }
 
-/* collapsed: center the icon */
 .collapsed .nav-item {
     justify-content: center;
     padding: 9px 0;
 }
 
-/* ─── Bottom settings ─────────────────────────────────────── */
 .sidebar-bottom {
     flex-shrink: 0;
     padding-bottom: 16px;

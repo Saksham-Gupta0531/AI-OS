@@ -1,7 +1,7 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 async function PromptApi(data) {
     try {
-        console.log(data);
         const response = await fetch(`${API_BASE_URL}/callAgent`, {
             method: "POST",
             headers: {
@@ -9,8 +9,6 @@ async function PromptApi(data) {
             },
             body: JSON.stringify(data),
         });
-        console.log(response);
-        
 
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

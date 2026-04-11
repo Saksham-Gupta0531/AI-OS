@@ -6,7 +6,7 @@ os_kernel.start()
 
 os_kernel.submit_task(
     task_id="CHAT_001",
-    agent_type="ArchitectAgent",
+    agent_type="architectagent",
     payload={
         "session_id": "chat_app_project_123",
         "action": "init",

@@ -12,7 +12,6 @@ export default function PackagesPage() {
       className="relative min-h-screen w-80% bg-cover bg-center bg-fixed bg-[#0a0a0a]"
       style={{ backgroundImage: `url(${bgImage})` }} 
     >
-      {/* FULL PAGE TINT: Dark over the whole image, with an orange glow on the right */}
       <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none"></div>
       <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-r from-transparent to-[#FF5A06]/10 z-0 pointer-events-none"></div>
 
@@ -20,9 +19,8 @@ export default function PackagesPage() {
         <Navbar />
       
       </div>
-      {/* Main Content Container */}
+
       <div className="relative z-10 w-full px-8 md:px-16 pt-24 pb-16 flex flex-col items-center">        
-        {/* Title & Description Area */}
         <div className="text-center max-w-3xl mb-12 animate-fade-in">
           <h1 className="text-5xl font-extrabold text-white mb-6 tracking-tight">
             AI <span className="text-[#FF5A06]">Packages</span>
@@ -34,19 +32,15 @@ export default function PackagesPage() {
 
         <hr className="w-full max-w-6xl border-gray-700/80 mb-16 shadow-sm" />
 
-        {/* MAPPING THROUGH CATEGORIES */}
         <div className="w-full max-w-7xl">
           {packagesData.map((category, index) => (
             <div key={category.categoryId} className="mb-16">
               
-              {/* Category Header */}
               <div className="flex items-center mb-6">
                 <div className="h-8 w-1.5 bg-[#FF5A06] rounded-full mr-4 shadow-[0_0_10px_rgba(255,90,6,0.5)]"></div>
                 <h2 className="text-3xl font-bold text-white tracking-wide">{category.categoryTitle}</h2>
               </div>
               
-              {/* Horizontally Scrollable Agent Row */}
-              {/* Using snap-x for smooth scrolling feel */}
               <div className="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scrollbar">
                 {category.agents.map((agent) => (
                   <PackageCard 
@@ -62,7 +56,6 @@ export default function PackagesPage() {
         </div>
       </div>
 
-      {/* Render Modal if an agent is selected */}
       {selectedAgent && (
         <PackageModal 
           data={selectedAgent} 
