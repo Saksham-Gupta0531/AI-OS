@@ -3,11 +3,10 @@ import "./ShowAgents.css";
 import { Search } from 'lucide-react';
 import ArchitectAgent from '../Agents/ArchitectAgent.jsx';
 
-//Change:- List ALL Agent From Backend 
 const agents = [
     { id: 1, name: "Architect", role: "System Design", status: "online", icon: "⬡" },
     { id: 2, name: "Focus", role: "Stay Focused", status: "online", icon: "◈" },
-    { id: 3, name: "Cheating", role: "Common", status: "online", icon: "◈" },
+    { id: 3, name: "Codecheater", role: "Common", status: "online", icon: "◈" },
 ];
 
 function ShowAgents({ setWhichAgent }) {
@@ -18,7 +17,6 @@ function ShowAgents({ setWhichAgent }) {
             setWhichAgent(id);
         }
     }
-    //Change:- List ALL Agent From Backend 
     const filtered = agents.filter((a) =>
         a.name.toLowerCase().includes(query.toLowerCase()) ||
         a.role.toLowerCase().includes(query.toLowerCase())
