@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid'; // Moved this here!
 import ShowAgents from './ShowAgents.jsx';
 import ArchitectAgent from '../Agents/ArchitectAgent.jsx';
+import FocusAgent from '../Agents/FocusAgent.jsx';
 import Prompt from "../Prompt/Prompt";
 
 function Result() {
@@ -34,6 +35,10 @@ function Result() {
 
                 {whichAgent === 1 && (
                     <ArchitectAgent agentData={AgentResult} />
+                )}
+
+                {whichAgent === 2 && (
+                    <FocusAgent />
                 )}
             </div>
 

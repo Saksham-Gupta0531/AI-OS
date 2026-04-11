@@ -17,7 +17,7 @@ function ShowAgents({ setWhichAgent }) {
     const [query, setQuery] = useState("");
 
     function handleAgentClick(id) {
-        if (id === 1) {
+        if (id !== 0) {
             setWhichAgent(id);
         }
     }
