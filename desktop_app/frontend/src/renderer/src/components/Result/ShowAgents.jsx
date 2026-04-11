@@ -7,10 +7,7 @@ import ArchitectAgent from '../Agents/ArchitectAgent.jsx';
 const agents = [
     { id: 1, name: "Architect", role: "System Design", status: "online", icon: "⬡" },
     { id: 2, name: "Focus", role: "Stay Focused", status: "online", icon: "◈" },
-    { id: 3, name: "ARIA", role: "Assistant", status: "idle", icon: "◎" },
-    { id: 4, name: "VECTOR", role: "Code Runner", status: "online", icon: "⬢" },
-    { id: 5, name: "PHANTOM", role: "Web Crawler", status: "offline", icon: "◇" },
-    { id: 6, name: "ORACLE", role: "Predictor", status: "idle", icon: "◉" },
+    { id: 3, name: "Cheating", role: "Common", status: "online", icon: "◈" },
 ];
 
 function ShowAgents({ setWhichAgent }) {

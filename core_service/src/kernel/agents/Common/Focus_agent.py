@@ -1,10 +1,10 @@
 import time
 import threading
-from src.kernel.brain import ask_llama3
-from src.kernel.tools.window_tools import WindowManager
-from src.kernel.ui.focus_alert import FocusAlertUI
+from ...brain import ask_llama3
+from core_service.src.kernel.tools.Common.window_tools import WindowManager
+from ...ui.focus_alert import FocusAlertUI
 
-class FocusGuardianAgent(threading.Thread):
+class FocusGuardianWorker(threading.Thread):
     def __init__(self, task_description, allowed_apps=None, duration_hours=3.0, check_interval=3):
         super().__init__(daemon=True)
         self.task_description = task_description
@@ -20,12 +20,11 @@ class FocusGuardianAgent(threading.Thread):
     def evaluate_window(self, window_title):
         lower_title = window_title.lower()
         
-        if lower_title in ["new tab - google chrome", "google", "search", "new tab"]:
+        if lower_title in ["new tab - google chrome", "google", "search", "new tab","AI OS"]:
             return "ALLOW"
             
         for app in self.allowed_apps:
             if app and app.lower() in lower_title:
-                print(f"  -> [Auto-Allowed by your rules: {app}]")
                 return "ALLOW"
 
         system_role = "You are a strict productivity enforcer. Output EXACTLY ONE WORD: ALLOW or BLOCK. Do not output any other text."
@@ -38,10 +37,8 @@ Reply with ONLY the word ALLOW or BLOCK.
 """
         try:
             response = ask_llama3(prompt=prompt, system_role=system_role)
-            print(f"  -> LLM Verdict: {response.strip()}")
             return "BLOCK" if "BLOCK" in response.upper() else "ALLOW"
         except Exception as e:
-            print(f"  -> [LLM Error: Defaulting to ALLOW. Error: {e}]")
             return "ALLOW"
 
     def trigger_snooze(self):
@@ -51,9 +48,6 @@ Reply with ONLY the word ALLOW or BLOCK.
 
     def run(self):
         self.running = True
-        print(f"\n[AI-OS Focus Guardian] Active. Goal: '{self.task_description}'")
-        print("-" * 50)
-        
         last_checked_title = ""
 
         while self.running and time.time() < self.end_time:
@@ -70,11 +64,9 @@ Reply with ONLY the word ALLOW or BLOCK.
                 current_title = current_window.title.strip()
 
                 if current_title != last_checked_title:
-                    print(f"\n[Screen] Current Application Opened: '{current_title}'")
                     verdict = self.evaluate_window(current_title)
                     
                     if verdict == "BLOCK":
-                        print(f"!!! DISTRACTION DETECTED !!! Triggering 5-second warning...")
                         FocusAlertUI.show_warning(
                             task_description=self.task_description,
                             blocked_window=current_window,
@@ -91,5 +83,38 @@ Reply with ONLY the word ALLOW or BLOCK.
                 pass 
             
             time.sleep(self.check_interval)
-            
-        print("\n[AI-OS Focus Guardian] Session complete.")
+
+
+class FocusGuardianAgent:
+    def __init__(self):
+        pass
+
+    def execute(self, payload):
+        prompt = payload.get("prompt", "")
+        
+        task_description = prompt
+        duration_hours = 3.0
+        allowed_apps = []
+
+        try:
+            parts = prompt.split('|')
+            for part in parts:
+                if 'Goal:' in part:
+                    task_description = part.replace('Goal:', '').strip()
+                elif 'Duration:' in part:
+                    duration_str = part.replace('Duration:', '').replace('h', '').strip()
+                    duration_hours = float(duration_str)
+                elif 'Allowed:' in part:
+                    apps_str = part.replace('Allowed:', '').strip()
+                    allowed_apps = [app.strip() for app in apps_str.split(',') if app.strip()]
+        except Exception as e:
+            print(f"Failed to parse focus prompt, using defaults: {e}")
+
+        worker = FocusGuardianWorker(
+            task_description=task_description,
+            allowed_apps=allowed_apps,
+            duration_hours=duration_hours
+        )
+        worker.start()
+
+        return f"Focus Protocol Active: Tracking '{task_description}' for {duration_hours} hours."

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid'; // Moved this here!
+import { v4 as uuidv4 } from 'uuid';
 import ShowAgents from './ShowAgents.jsx';
 import ArchitectAgent from '../Agents/ArchitectAgent.jsx';
 import FocusAgent from '../Agents/FocusAgent.jsx';
@@ -38,7 +38,7 @@ function Result() {
                 )}
 
                 {whichAgent === 2 && (
-                    <FocusAgent />
+                    <FocusAgent sessionId={sessionId} />
                 )}
             </div>
 

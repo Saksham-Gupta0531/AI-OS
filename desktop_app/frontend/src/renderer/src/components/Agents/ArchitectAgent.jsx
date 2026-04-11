@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import mermaid from "mermaid";
 import "./ArchitectAgent.css";
 import ExecuteSetup from "./ExecuteSetup";
-import { Terminal, Layers, Box, Code2, Sparkles } from 'lucide-react';
+import { Terminal, Layers, Box, Code2, Sparkles, Download } from 'lucide-react';
 
 mermaid.initialize({
     startOnLoad: false,
@@ -25,12 +25,8 @@ const MermaidViewer = ({ chart }) => {
     useEffect(() => {
         let cleanChart = chart ? chart.trim() : "";
 
-        // FIX 1: Remove the hallucinated `>` and pull the next line up
-        // This turns "A -->| text |> \n B" into "A -->| text | B"
         cleanChart = cleanChart.replace(/\|>\s*/g, '| ');
         
-        // FIX 2: Catch any standard pipes `|` that also broke onto a new line
-        // This turns "A -->| text | \n B" into "A -->| text | B"
         cleanChart = cleanChart.replace(/\|\s*\n\s*/g, '| ');
 
         cleanChart = cleanChart.replace(/^(graph|flowchart)\s+LR/im, '$1 TD');
@@ -52,6 +48,25 @@ const MermaidViewer = ({ chart }) => {
         }
     }, [chart]);
 
+    const handleDownloadSVG = () => {
+        if (!containerRef.current) return;
+        const svgNode = containerRef.current.querySelector('svg');
+        if (!svgNode) return;
+
+        const svgData = new XMLSerializer().serializeToString(svgNode);
+        const blob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'architecture-diagram.svg';
+        document.body.appendChild(link);
+        link.click();
+        
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
+
     if (hasError) {
         return (
             <div className="flex flex-col gap-4 p-2">
@@ -65,7 +80,22 @@ const MermaidViewer = ({ chart }) => {
         );
     }
 
-    return <div ref={containerRef} className="mermaid-container flex justify-center w-full overflow-x-auto" />;
+    return (
+        <div className="relative w-full flex flex-col items-center">
+            {chart && !hasError && (
+                <div className="w-full flex justify-end mb-2">
+                    <button
+                        onClick={handleDownloadSVG}
+                        className="flex items-center gap-2 px-3 py-1.5 text-xs bg-[#00fff705] border border-[#00fff740] text-[#00fff7] rounded-sm hover:bg-[#00fff720] hover:border-[#00fff7] hover:shadow-[0_0_8px_#00fff740] transition-all duration-300 font-['Orbitron'] tracking-widest cursor-pointer uppercase"
+                        title="Download SVG"
+                    >
+                        <Download className="w-4 h-4" /> Download SVG
+                    </button>
+                </div>
+            )}
+            <div ref={containerRef} className="mermaid-container flex justify-center w-full overflow-x-auto" />
+        </div>
+    );
 };
 
 const formatText = (text) => {

@@ -1,1 +1,1 @@
-from .window_tools import WindowManager
+from .Common.window_tools import WindowManager
