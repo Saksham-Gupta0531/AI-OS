@@ -1,35 +1,31 @@
 import os
 from groq import Groq
+from google import genai
 from dotenv import load_dotenv
+from PIL import Image
 
 load_dotenv()
-api_key = os.getenv("AI_OS_Key")
 
-if not api_key:
-    raise ValueError("ERROR: AI_OS_Key not found!")
+groq_api_key = os.getenv("AI_OS_Key")
+groq_client = Groq(api_key=groq_api_key)
 
-client = Groq(api_key=api_key)
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+gemini_client = genai.Client(api_key=gemini_api_key)
 
-# Added the 'history' parameter here
-def ask_llama3(prompt, system_role="You are a helpful AI OS assistant.", history=None):
+def ask_groq(prompt, system_role="You are a helpful AI OS assistant.", model="llama-3.3-70b-versatile", history=None):
     if history is None:
         history = []
         
     try:
-        # 1. Start with the system instructions
         messages = [{"role": "system", "content": system_role}]
-        
-        # 2. Inject all the previous messages (the Sidebar memory!)
         messages.extend(history)
-        
-        # 3. Add the brand new prompt from the user
         messages.append({"role": "user", "content": prompt})
 
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+        completion = groq_client.chat.completions.create(
+            model=model,  
             messages=messages, 
-            temperature=0.5,  
-            max_tokens=1024, 
+            temperature=0.0, 
+            max_tokens=4096, 
             top_p=1,
             stream=False,
             stop=None,
@@ -38,9 +34,27 @@ def ask_llama3(prompt, system_role="You are a helpful AI OS assistant.", history
         return completion.choices[0].message.content
 
     except Exception as e:
-        return f"Brain Error: {str(e)}"
+        return f"Brain (Groq) Error: {str(e)}"
 
+
+def ask_gemini_vision(prompt, image_input, model="gemini-2.5-flash"):
+    if not gemini_client:
+        return "Error: Gemini client not initialized in brain."
+        
+    try:
+        if isinstance(image_input, str):
+            img = Image.open(image_input)
+        else:
+            img = image_input 
+            
+        response = gemini_client.models.generate_content(
+            model=model,
+            contents=[img, prompt]
+        )
+        return response.text.strip()
+    except Exception as e:
+        return f"Brain (Gemini) Error: {str(e)}"
+    
 if __name__ == "__main__":
-    print("Connecting to Llama 3...")
-    response = ask_llama3("Hello! Are you ready to run my Operating System?")
-    print(f"Llama 3 says: {response}")
+    print("Testing Brain connections...")
+    print("Groq Test:", ask_groq("Hello, testing connection!"))

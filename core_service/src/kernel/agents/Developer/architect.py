@@ -1,6 +1,6 @@
 import json
 import os
-from ...brain import ask_llama3
+from ...brain import ask_groq
 
 class ArchitectAgent:
     def __init__(self):
@@ -51,26 +51,23 @@ class ArchitectAgent:
         history = payload.get("history", [])
         mode = payload.get("mode", "industry") 
 
-        # 3. Apply the Mode logic
         mode_context = ""
         if mode == "industry":
             mode_context = "MODE: Industry-Based. You MUST focus on enterprise-grade architecture, high scalability, robust security, deployment pipelines, and production-ready industry best practices."
         else:
             mode_context = "MODE: Project-Based. You MUST focus on straightforward, easy-to-implement modern architecture. Focus on the core requirements and rapid development. Do NOT over-engineer."
 
-        # 4. Inject the Database into the Prompt
         injected_role = self.base_system_role.replace("{REGISTRY_DATA}", self.command_registry)
         system_role = f"{injected_role}\n\n{mode_context}"
 
-        # 5. Route the action
         if action == "init":
             full_prompt = f"Design a system architecture and execution plan for the following request: {prompt}"
-            return ask_llama3(full_prompt, system_role=system_role, history=history)
+            return ask_groq(full_prompt, system_role=system_role, model="llama-3.3-70b-versatile", history=history)
             
         elif action == "analyze":
             project_tree = payload.get("project_tree", "No tree provided.")
             full_prompt = f"Review this project structure against the Knowledge Base for anti-patterns and suggest refactoring:\n\n{project_tree}"
-            return ask_llama3(full_prompt, system_role=system_role, history=history)
+            return ask_groq(full_prompt, system_role=system_role, model="llama-3.3-70b-versatile", history=history)
 
         else:
             return "Error: Unknown action for ArchitectAgent."
