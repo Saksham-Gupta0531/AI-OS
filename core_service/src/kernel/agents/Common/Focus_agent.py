@@ -1,8 +1,8 @@
 import time
 import threading
-from src.kernel.brain import ask_llama3
-from src.kernel.tools.window_tools import WindowManager
-from src.kernel.ui.focus_alert import FocusAlertUI
+from ...brain import ask_groq
+from ...tools.Common.window_tools import WindowManager
+from ...ui.focus_alert import FocusAlertUI
 
 class FocusGuardianAgent(threading.Thread):
     def __init__(self, task_description, allowed_apps=None, duration_hours=3.0, check_interval=3):
@@ -37,8 +37,7 @@ Is this application relevant and helpful for the user's goal?
 Reply with ONLY the word ALLOW or BLOCK.
 """
         try:
-            response = ask_llama3(prompt=prompt, system_role=system_role)
-            print(f"  -> LLM Verdict: {response.strip()}")
+            response = ask_groq(prompt=prompt, system_role=system_role, model="llama-3.1-8b-instant")
             return "BLOCK" if "BLOCK" in response.upper() else "ALLOW"
         except Exception as e:
             print(f"  -> [LLM Error: Defaulting to ALLOW. Error: {e}]")
