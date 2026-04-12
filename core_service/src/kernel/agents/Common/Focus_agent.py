@@ -1,6 +1,6 @@
 import time
 import threading
-from ...brain import ask_llama3
+from ...brain import ask_groq
 from core_service.src.kernel.tools.Common.window_tools import WindowManager
 from ...ui.focus_alert import FocusAlertUI
 
@@ -36,7 +36,7 @@ Is this application relevant and helpful for the user's goal?
 Reply with ONLY the word ALLOW or BLOCK.
 """
         try:
-            response = ask_llama3(prompt=prompt, system_role=system_role)
+            response = ask_groq(prompt=prompt, system_role=system_role, model="llama-3.1-8b-instant")
             return "BLOCK" if "BLOCK" in response.upper() else "ALLOW"
         except Exception as e:
             return "ALLOW"
