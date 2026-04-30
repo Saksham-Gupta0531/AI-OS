@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Home from './Home/Home'
 import CursorEffect from './Cursor/CursorEffect'
 import PackagesPage from './Packages/PackagesPage';
+import Contact from './Contact/Contact';
 import AdminLayout from './Admin/AdminLayout';
 import Dashboard from './Admin/Dashboard';
 import AgentsForm from './Admin/AgentsForm';
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path="/packages" element={<PackagesPage />} />
+        <Route path="/contact" element={<Contact />} />
         
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
