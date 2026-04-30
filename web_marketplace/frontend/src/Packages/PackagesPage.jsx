@@ -1,11 +1,41 @@
-import React, { useState } from 'react';
-import { packagesData } from './data/packages'; 
+import React, { useState, useEffect } from 'react';
+import { packagesData as defaultPackages } from './data/packages'; 
 import PackageCard from './PackageCard';
 import PackageModal from './PackageModal';
 import bgImage from '../media/packages.png'; 
 import Navbar from '../Navbar/Navbar';
 export default function PackagesPage() {
   const [selectedAgent, setSelectedAgent] = useState(null);
+  const [packagesData, setPackagesData] = useState(defaultPackages);
+
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/packages');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            const combinedMap = new Map();
+            defaultPackages.forEach(p => combinedMap.set(p.categoryId, { ...p, agents: [...p.agents] }));
+            
+            data.forEach(p => {
+              if (combinedMap.has(p.categoryId)) {
+                const existing = combinedMap.get(p.categoryId);
+                existing.agents = [...existing.agents, ...p.agents];
+              } else {
+                combinedMap.set(p.categoryId, p);
+              }
+            });
+            
+            setPackagesData(Array.from(combinedMap.values()));
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch packages from backend", error);
+      }
+    };
+    fetchPackages();
+  }, []);
 
   return (
     <div 
