@@ -1,13 +1,26 @@
 import React from 'react';
-import BackgroundVideo from '../components/BackgroundVideo';
-import LoginCard from '../components/LoginCard';
+import AuthBgVideo from '../media/AuthBgVideo.mp4';
+import LoginCard from './LoginCard';
+import BackgroundVideo from './BackgroundVideo.jsx';
+import { useNavigate } from 'react-router-dom';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-black font-sans">
-      {/* Assuming the video is placed in your public folder */}
-      <BackgroundVideo videoSrc="/baground.mp4" />
-      <LoginCard />
+      <button onClick={() => navigate('/')}
+        className="absolute left-8 top-8 z-20 rounded-lg border border-white/20 bg-white/10 px-6 py-2 text-sm font-medium text-white transition-all hover:bg-white/20">
+        Home
+      </button>
+
+      <BackgroundVideo videoSrc={AuthBgVideo} />
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <div className="main-card relative z-10 flex items-center justify-center">
+          <LoginCard />
+        </div>
+      </GoogleOAuthProvider>
     </div>
   );
 };

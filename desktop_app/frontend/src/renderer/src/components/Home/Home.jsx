@@ -1,22 +1,38 @@
+import { useState } from 'react';
 import bgImg from '../../media/bgImg.png';
 import Sidebar from '../Sidebar/Sidebar';
 import Result from '../Result/Result';
-import Prompt from '../Prompt/Prompt';
+import AuthHome from '../Auth/AuthHome';
 
 function Home() {
+    const [chatKey, setChatKey] = useState(0);
+    const [isVerified, setIsVerified] = useState(false); 
+
+    const handleNewChat = () => {
+        setChatKey(prevKey => prevKey + 1);
+    };
+
     return (
         <div className="w-screen h-screen flex overflow-hidden text-white bg-cover bg-bottom" style={{ backgroundImage: `url(${bgImg})` }}>
-            <div className="h-full flex-shrink-0" style={{ width: '16%' }}>
-                <Sidebar />
-            </div>
-
-            <div className="flex flex-col overflow-hidden" style={{ width: '84%', height: '100%' }}>
-                
-                <div className="flex-1 overflow-hidden w-full h-full">
-                    <Result />
+            
+            {!isVerified ? (
+                <div className="w-full h-full flex items-center justify-center backdrop-blur-sm bg-black/40 z-50">
+                    
+                    <AuthHome onVerify={() => setIsVerified(true)} />
                 </div>
+            ) : (
+                <>
+                    <div className="h-full flex-shrink-0 border-r border-cyan-900/30" style={{ width: '16%' }}>
+                        <Sidebar onNewChat={handleNewChat} />
+                    </div>
 
-            </div>
+                    <div className="flex flex-col overflow-hidden" style={{ width: '84%', height: '100%' }}>
+                        <div className="flex-1 overflow-hidden w-full h-full">
+                            <Result key={chatKey} />
+                        </div>
+                    </div>
+                </>
+            )}
 
         </div>
     );

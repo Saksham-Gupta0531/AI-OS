@@ -1,8 +1,10 @@
-const express = require('express');
-const route = express.Router();
-const authRoute = require('./auth');
-const { authLimiter, apiLimiter } = require('../middleware/rateLimiter');
+import express from "express";
+import authRoute from "./auth.js";
+import adminRoute from './admin.js'
 
-route.use('/auth', authLimiter, authRoute);
+const router = express.Router();
 
-module.exports = route;
+router.use('/auth', authRoute);
+router.use('/admin',adminRoute);
+
+export default router;

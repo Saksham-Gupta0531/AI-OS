@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Menu, SquarePen, Search, Bot, Settings, Zap, User } from 'lucide-react';
 import './Sidebar.css';
 
-function Sidebar() {
+function Sidebar({ onNewChat }) {
     const [collapsed, setCollapsed] = useState(false);
 
     return (
@@ -29,27 +29,23 @@ function Sidebar() {
                 <div className="sidebar-divider" />
 
                 <nav className="nav-list">
-                    <div className="nav-item" title="New Chat">
+                    <div className="nav-item" title="New Chat" onClick={onNewChat} style={{ cursor: 'pointer' }}>
                         <SquarePen className="nav-icon" />
                         {!collapsed && <span>New Chat</span>}
                     </div>
-                    <div className="nav-item" title="Search Chats">
+                    <div className="nav-item" title="Search Chats" style={{ cursor: 'pointer' }}>
                         <Search className="nav-icon" />
                         {!collapsed && <span>Search Chats</span>}
-                    </div>
-                    <div className="nav-item" title="Agents">
-                        <Bot className="nav-icon" />
-                        {!collapsed && <span>Agents</span>}
                     </div>
                 </nav>
 
                 <div className="sidebar-bottom">
                     <div className="sidebar-divider" />
-                    <div className="nav-item " title="Settings">
+                    <div className="nav-item " title="Settings" style={{ cursor: 'pointer' }}>
                         <User className="nav-icon" />
                         {!collapsed && <span>Siddharth</span>}
                     </div>
-                    <div className="nav-item settings-item" title="Settings">
+                    <div className="nav-item settings-item" title="Settings" style={{ cursor: 'pointer' }}>
                         <Settings className="nav-icon" />
                         {!collapsed && <span>Settings & Help</span>}
                     </div>

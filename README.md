@@ -1,7 +1,5 @@
 # AI-OS
-
 **AI-OS** is a next-generation, intelligence-first operating environment designed to seamlessly integrate artificial intelligence into daily computing. By replacing traditional rigid operating system paradigms with dynamic, agent-driven architecture, AI-OS adapts to your workflows, manages tasks autonomously, and provides a deeply contextual user experience.
-
 ---
 
 # Key Features
