@@ -1,4 +1,21 @@
-myenv/
-Workflow/
-# //
+# Environments
 .env
+.env.*
+!.env.example
+myenv/
+
+# Dependencies
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Builds
+dist/
+build/
+
+# OS Files
+.DS_Store
+Thumbs.db
