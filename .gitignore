@@ -2,3 +2,4 @@ myenv/
 Workflow/
 # //
 .env
+ai_os_core.db

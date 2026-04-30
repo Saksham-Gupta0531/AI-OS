@@ -32,11 +32,6 @@ export default function PackageModal({ data, onClose }) {
           ))}
         </ul>
 
-        <button 
-          className="mt-8 px-5 py-3 w-full bg-[#FF5A06] text-white border-none rounded-lg cursor-pointer font-bold transition-all duration-200 hover:bg-[#FF5A06]/80 hover:shadow-[0_0_15px_rgba(255,90,6,0.4)]"
-        >
-          Initialize Agent
-        </button>
       </div>
     </div>
   );

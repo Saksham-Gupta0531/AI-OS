@@ -1,5 +1,7 @@
 import HeroII from '../media/HeroII.png';
+import { useNavigate } from 'react-router-dom';
 function Services() {
+    const navigate = useNavigate();
     const roles = [
         {
             title: 'DEVELOPER',
@@ -50,8 +52,8 @@ function Services() {
         <div className="relative min-h-screen w-full bg-cover bg-center bg-no-repeat flex flex-col justify-end pb-16 px-8 md:px-16" style={{ backgroundImage: `url(${HeroII})` }}>
             <div className="absolute inset-x-0 top-0 h-80 bg-gradient-to-b from-[#050505] via-[#050505]/60 to-transparent z-0 pointer-events-none" />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#050505] via-[#050505]/80 to-transparent pointer-events-none" />
-            
-            
+
+
 
             <div className="relative z-10 w-full max-w-7xl mx-auto flex flex-col items-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full mb-10">
@@ -64,7 +66,7 @@ function Services() {
                     ))}
                 </div>
 
-                <button className="group flex items-center gap-2 px-6 py-3 bg-transparent border border-white/20 rounded-full text-white text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black">
+                <button onClick={() => navigate('/packages')} className="group flex items-center gap-2 px-6 py-3 bg-transparent border border-white/20 rounded-full text-white text-sm font-medium transition-all duration-300 hover:bg-white hover:text-black">
                     Explore More Agents
                     <span className="transition-transform duration-300 group-hover:translate-y-1">↓</span>
                 </button>

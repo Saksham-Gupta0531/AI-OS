@@ -1,6 +1,6 @@
 export const packagesData = [
   {
-    categoryId: 'developer',
+    categoryId: crypto.randomUUID(),
     categoryTitle: 'Developer Agents',
     agents: [
       {
@@ -36,7 +36,7 @@ export const packagesData = [
     ]
   },
   {
-    categoryId: 'creator',
+    categoryId: crypto.randomUUID(),
     categoryTitle: 'Creator Agents',
     agents: [
       {
@@ -50,12 +50,6 @@ export const packagesData = [
         description: 'Automatically detects highlights, removes silences, and syncs cuts to background music.',
         features: ['Auto-Captioning', 'Highlight Extraction', 'Beat Syncing'],
         iconUrl: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=500'
-      },
-      {
-        id: 'cre-3', title: 'Copywriting Assistant', subtitle: 'Persuade & Convert',
-        description: 'Drafts SEO-optimized blog posts, ad copy, and engaging social media threads.',
-        features: ['Tone Adjustment', 'SEO Keyword Injection', 'A/B Test Variations'],
-        iconUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead2708?q=80&w=500'
       },
       {
         id: 'cre-4', title: '3D Asset Creator', subtitle: 'Model & Texture',
@@ -72,7 +66,7 @@ export const packagesData = [
     ]
   },
   {
-    categoryId: 'gamer',
+    categoryId: crypto.randomUUID(),
     categoryTitle: 'Gamer Agents',
     agents: [
       {
@@ -98,17 +92,11 @@ export const packagesData = [
         description: 'Scans discord servers and friend lists to build the optimal team for your rank.',
         features: ['Synergy Scoring', 'Toxicity Filtering', 'Schedule Sync'],
         iconUrl: 'https://images.unsplash.com/photo-1511882150382-421056c89033?q=80&w=500'
-      },
-      {
-        id: 'gam-5', title: 'Build Optimizer', subtitle: 'Gear & Loadouts',
-        description: 'Calculates the highest DPS loadouts and stat distribution for RPGs and Shooters.',
-        features: ['Damage Calculation', 'Loot Table Probability', 'Patch Note Updates'],
-        iconUrl: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=500'
       }
     ]
   },
   {
-    categoryId: 'student',
+    categoryId: crypto.randomUUID(),
     categoryTitle: 'Student Agents',
     agents: [
       {
@@ -135,24 +123,6 @@ export const packagesData = [
         features: ['Auto-Question Generation', 'Retention Tracking', 'Audio Pronunciation'],
         iconUrl: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=500'
       },
-      {
-        id: 'stu-4', title: 'Flashcard Generator', subtitle: 'Spaced Repetition',
-        description: 'Automatically creates Anki-style flashcards from your lecture notes.',
-        features: ['Auto-Question Generation', 'Retention Tracking', 'Audio Pronunciation'],
-        iconUrl: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=500'
-      },
-      {
-        id: 'stu-4', title: 'Flashcard Generator', subtitle: 'Spaced Repetition',
-        description: 'Automatically creates Anki-style flashcards from your lecture notes.',
-        features: ['Auto-Question Generation', 'Retention Tracking', 'Audio Pronunciation'],
-        iconUrl: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?q=80&w=500'
-      },
-      {
-        id: 'stu-5', title: 'Language Tutor', subtitle: 'Speak & Translate',
-        description: 'Provides real-time conversational practice in 40+ languages with accent correction.',
-        features: ['Voice Recognition', 'Idiom Explanations', 'Grammar Correction'],
-        iconUrl: 'https://images.unsplash.com/photo-1456518563096-0ff58081d082?q=80&w=500'
-      }
     ]
   }
 ];

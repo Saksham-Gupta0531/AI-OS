@@ -1,61 +1,29 @@
-import axios from "axios";
+const BASE_API = import.meta.env.VITE_BACKEND_API;
 
-const BASE_API = 'https://dragend-production.up.railway.app/api/auth';
-
-const api = axios.create({
-    baseURL: BASE_API,
-    withCredentials: true,
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
-
-export const SignUpApi = async (username, email, password, Cpassword) => {
+async function AUTHAPI(id_token) {
     try {
-        const response = await api.post(`${BASE_API}/register`, {
-            username,
-            email,
-            password,
-            Cpassword
+        const res = await fetch(`${BASE_API}/auth/google`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                token: id_token
+            })
         });
-        return response;
-    } catch (error) {
-        throw error.response ? error.response.data : { message: "Network Error" };
-    }
-};
 
-export const VerifyOtpApi = async (email, otp) => {
-    try {
-        const response = await api.post(`${BASE_API}/verify-otp`, { email, otp });
-        return response;
-    } catch (error) {
-        throw error.response ? error.response.data : { message: "Network Error" };
-    }
-};
+        const data = await res.json();
 
-export const LoginUserApi = async (email, password) => {
-    try {
-        const response = await api.post(`${BASE_API}/login`, { email, password });
-        return response.data;
-    } catch (error) {
-        throw error.response ? error.response.data : { message: "Network Error" };
-    }
-};
+        if (res.ok) {
+            return { status: true, data: data };
+        }
 
-export const CheckAuth = async () => {
-    try {
-        const res = await api.get(`${BASE_API}/profile`, { withCredentials: true });
-        return res.data;
+        return { status: false, message: data.message };
+
     } catch (err) {
-        return { authenticated: false };
+        console.error("Login failed", err);
+        return { status: false, message: "Something went wrong" };
     }
-};
+}
 
-export const logoutApi = async () => {
-    try {
-        const res = await api.get(`${BASE_API}/logout`, { withCredentials: true });
-        return res.data;
-    } catch (err) {
-        return { logout: false };
-    }
-};
+export default AUTHAPI;
