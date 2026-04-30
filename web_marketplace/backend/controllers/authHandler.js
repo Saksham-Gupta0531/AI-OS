@@ -8,7 +8,7 @@ const {
   loginSchema,
   forgetSchema,
   createPasswordSchema,
-} = require("../validations/auth");
+} = require("../validation/auth");
 const sendEmail = require("../utils/SendEmail");
 require("dotenv").config();
 
