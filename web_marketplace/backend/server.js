@@ -17,7 +17,13 @@ const MONGO_URL = process.env.MONGO_URL;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(mongoSanitize());
+// Custom sanitize to avoid Node 22+ req.query readonly error
+app.use((req, res, next) => {
+    if (req.body) mongoSanitize.sanitize(req.body);
+    if (req.params) mongoSanitize.sanitize(req.params);
+    if (req.headers) mongoSanitize.sanitize(req.headers);
+    next();
+});
 
 // Connect Database
 connectDB(MONGO_URL);
