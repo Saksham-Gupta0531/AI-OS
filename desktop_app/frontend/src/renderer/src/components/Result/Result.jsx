@@ -8,7 +8,6 @@ import Prompt from "../Prompt/Prompt";
 
 function Result() {
     const [whichAgent, setWhichAgent] = useState(0);
-
     const [sessionId, setSessionId] = useState("");
     const [AgentResult, setAgentResult] = useState(null);
 
@@ -22,9 +21,14 @@ function Result() {
     const handleAiResponse = (aiText) => {
         setAgentResult({ result: aiText });
     };
+
     const getActiveAgentProps = () => {
-        if (whichAgent === 1) return { agentId: 1, agentName: 'architectagent' };
-        return null;
+        switch (whichAgent) {
+            case 1: return { agentId: 1, agentName: 'architectagent' };
+            case 2: return { agentId: 2, agentName: 'focusagent' };
+            case 3: return { agentId: 3, agentName: 'codecheateragent' };
+            default: return null;
+        }
     };
 
     const activeAgent = getActiveAgentProps();
@@ -34,16 +38,9 @@ function Result() {
             <div className="flex-1 w-full overflow-hidden">
                 {whichAgent === 0 && <ShowAgents setWhichAgent={setWhichAgent} />}
 
-                {whichAgent === 1 && (
-                    <ArchitectAgent agentData={AgentResult} />
-                )}
-
-                {whichAgent === 2 && (
-                    <FocusAgent sessionId={sessionId} />
-                )}
-                {whichAgent === 3 && (
-                    <CodeCheaterAgent sessionId={sessionId} />
-                )}
+                {whichAgent === 1 && <ArchitectAgent agentData={AgentResult} />}
+                {whichAgent === 2 && <FocusAgent sessionId={sessionId} />}
+                {whichAgent === 3 && <CodeCheaterAgent sessionId={sessionId} />}
             </div>
 
             {activeAgent && (
@@ -58,6 +55,5 @@ function Result() {
         </div>
     );
 }
-
 
 export default Result;

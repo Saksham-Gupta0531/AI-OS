@@ -1,14 +1,24 @@
 import uuid
 import asyncio
 import threading
+import os
 from fastapi import APIRouter, HTTPException
+from dotenv import load_dotenv
 from pydantic import BaseModel
 from core_service.src.kernel.orchestrator import Orchestrator, TaskPriority
 from core_service.src.kernel.tools.Developer.cli_tool import execute_cli_command
 
+load_dotenv()
+
+WEB_BACKEND_API = os.getenv()
+
 router = APIRouter()
 os_kernel = Orchestrator()
 os_kernel.start()
+
+
+class VerifyRequest(BaseModel):
+    email: str
 
 class PromptRequest(BaseModel):
     agentId: int
@@ -20,6 +30,12 @@ class PromptRequest(BaseModel):
 class ExecutionRequest(BaseModel):
     command : str
     target_directory: str
+
+
+@router.post("/verify-email")
+async def verify_auth_code(request: VerifyRequest):
+    email = request.email
+
 
 @router.post("/callAgent")
 async def process_agent_prompt(request: PromptRequest):
