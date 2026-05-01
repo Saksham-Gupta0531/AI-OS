@@ -2,10 +2,15 @@ const BASE_API = import.meta.env.VITE_BACKEND_API;
 
 export async function TotalUser() {
     try {
+        // 1. Grab the token from local storage
+        const token = localStorage.getItem('token');
+
         const res = await fetch(`${BASE_API}/admin/totalUser`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                // 2. Attach it to the Authorization header
+                "Authorization": `Bearer ${token}`
             }
         });
 
@@ -23,10 +28,13 @@ export async function TotalUser() {
 
 export async function AddAgentByRole(formData) {
     try {
+        const token = localStorage.getItem('token');
+
         const res = await fetch(`${BASE_API}/admin/addAgentByRole`, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify(formData)
         });
@@ -47,10 +55,13 @@ export async function AddAgentByRole(formData) {
 
 export async function GetAllAgents() {
     try {
+        const token = localStorage.getItem("token");
+
         const res = await fetch(`${BASE_API}/admin/showAllAgents`, {
             method: "GET",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
             }
         });
 

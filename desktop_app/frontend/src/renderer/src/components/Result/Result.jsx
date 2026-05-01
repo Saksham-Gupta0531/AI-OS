@@ -6,41 +6,61 @@ import FocusAgent from '../Agents/FocusAgent.jsx';
 import CodeCheaterAgent from '../Agents/CodeCheaterAgent.jsx';
 import Prompt from "../Prompt/Prompt";
 
-function Result() {
-    const [whichAgent, setWhichAgent] = useState(0);
+function Result({ agentData }) {
+
+    const [selectedAgentId, setSelectedAgentId] = useState(null);
     const [sessionId, setSessionId] = useState("");
     const [AgentResult, setAgentResult] = useState(null);
 
     useEffect(() => {
-        if (whichAgent !== 0) {
+        if (selectedAgentId) {
             setSessionId(`agent_session_${uuidv4()}`);
             setAgentResult(null);
         }
-    }, [whichAgent]);
+    }, [selectedAgentId]);
 
     const handleAiResponse = (aiText) => {
         setAgentResult({ result: aiText });
     };
 
+    const activeAgentData = agentData?.find(a => a._id === selectedAgentId);
+
     const getActiveAgentProps = () => {
-        switch (whichAgent) {
-            case 1: return { agentId: 1, agentName: 'architectagent' };
-            case 2: return { agentId: 2, agentName: 'focusagent' };
-            case 3: return { agentId: 3, agentName: 'codecheateragent' };
-            default: return null;
-        }
+        if (!activeAgentData) return null;
+        return {
+            agentId: activeAgentData._id,
+            agentName: activeAgentData.title.toLowerCase().replace(/\s+/g, "")
+        };
     };
 
     const activeAgent = getActiveAgentProps();
 
+    const renderAgentComponent = () => {
+        if (!activeAgentData) return null;
+
+        switch (activeAgentData.title) {
+            case "Code Architect":
+                return <ArchitectAgent agentData={AgentResult} />;
+            case "Focus":
+                return <FocusAgent sessionId={sessionId} agentData={activeAgentData} />;
+            case "Code Helper":
+                return <CodeCheaterAgent sessionId={sessionId} agentData={activeAgentData} />;
+            default:
+                return null;
+        }
+    };
+
     return (
         <div className='flex flex-col w-full h-full'>
             <div className="flex-1 w-full overflow-hidden">
-                {whichAgent === 0 && <ShowAgents setWhichAgent={setWhichAgent} />}
+                {!selectedAgentId && (
+                    <ShowAgents
+                        agentData={agentData}
+                        setWhichAgent={setSelectedAgentId}
+                    />
+                )}
 
-                {whichAgent === 1 && <ArchitectAgent agentData={AgentResult} />}
-                {whichAgent === 2 && <FocusAgent sessionId={sessionId} />}
-                {whichAgent === 3 && <CodeCheaterAgent sessionId={sessionId} />}
+                {renderAgentComponent()}
             </div>
 
             {activeAgent && (

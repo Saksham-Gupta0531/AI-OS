@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import PromptApi from '../Prompt/PromptApi.jsx';
 
-function FocusAgent({ sessionId }) {
+function FocusAgent({ sessionId, agentData }) {
     const [task, setTask] = useState('');
     const [duration, setDuration] = useState('3.0');
     const [allowedApps, setAllowedApps] = useState('');
     const [status, setStatus] = useState('SYSTEM READY');
     const [isLoading, setIsLoading] = useState(false);
+    
 
     const handleEngage = async () => {
         if (!task) {
@@ -20,11 +21,12 @@ function FocusAgent({ sessionId }) {
         const compiledPrompt = `Goal: ${task} | Duration: ${duration}h | Allowed: ${allowedApps}`;
 
         try {
+            
             const result = await PromptApi({
-                agentId: 2, 
-                agentName: "focusagent",
+                agentId: agentData._id,
+                agentName: agentData.title,
                 prompt: compiledPrompt,
-                sessionId: sessionId 
+                sessionId: sessionId
             });
 
             if (result && result.status === 'success') {

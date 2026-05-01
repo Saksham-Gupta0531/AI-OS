@@ -4,9 +4,9 @@ from core_service.src.kernel.agents.Common.Focus_agent import FocusGuardianAgent
 from core_service.src.kernel.agents.Developer.CodeCheater import CodeCheaterAgent
 
 AGENT_REGISTRY = {
-    "architectagent": ArchitectAgent(),
-    "focusagent":FocusGuardianAgent(),
-    "codecheater":CodeCheaterAgent(),
+    "codearchitect": ArchitectAgent(),
+    "focus":FocusGuardianAgent(),
+    "code helper":CodeCheaterAgent(),
 }
 
 def get_agents(agent_type: str):

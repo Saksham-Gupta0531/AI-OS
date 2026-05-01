@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PromptApi from '../Prompt/PromptApi.jsx';
 
-function CodeCheaterAgent({ sessionId }) {
+function CodeCheaterAgent({ sessionId, agentData }) {
     const [isActive, setIsActive] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [platform, setPlatform] = useState("LeetCode");
@@ -16,13 +16,12 @@ function CodeCheaterAgent({ sessionId }) {
     const handlePlatformChange = async (e) => {
         const newPlatform = e.target.value;
         setPlatform(newPlatform);
-        
-        // If already active, silently update the backend's target platform
+
         if (isActive) {
             addLog(`Updating target architecture to: ${newPlatform}...`);
             await PromptApi({
-                agentId: 3,
-                agentName: "CodeCheater",
+                agentId: agentData._id,
+                agentName: agentData.title,
                 prompt: JSON.stringify({ action: "init", platform: newPlatform }),
                 sessionId: sessionId
             });
@@ -35,19 +34,18 @@ function CodeCheaterAgent({ sessionId }) {
 
         setIsLoading(true);
         addLog("Transmitting activation payload to Core Service...");
-
+        console.log(agentData);
         try {
             const response = await PromptApi({
-                agentId: 3,
-                agentName: "CodeCheater",
-                // Pass the platform inside the prompt payload for the backend to parse
+                agentId: agentData._id,
+                agentName: agentData.title,
                 prompt: JSON.stringify({ action: "init", platform: platform }),
                 sessionId: sessionId
             });
 
             if (response && response.status === "success") {
                 setIsActive(true);
-                addLog("✓ BACKGROUND DAEMON ACTIVATED.");
+                addLog("✓ BACKGROUND ACTIVATED.");
                 addLog(`✓ TARGET: ${platform.toUpperCase()}`);
                 addLog("Listening for keystroke triggers...");
             } else {
@@ -94,7 +92,7 @@ function CodeCheaterAgent({ sessionId }) {
                             CodeCheater Subsystem
                         </h2>
                         <p className="text-[#5a8090] text-xs mt-1 tracking-widest uppercase font-mono">
-                            Target Architecture Profile: Background Daemon
+                            Target Architecture Profile
                         </p>
                     </div>
 
@@ -111,12 +109,12 @@ function CodeCheaterAgent({ sessionId }) {
                         <div className="flex items-center space-x-2">
                             <h3 className="text-sm font-semibold text-[#80a0b0] tracking-widest uppercase">Configuration</h3>
                         </div>
-                        
+
                         {/* Platform Dropdown */}
                         <div className="flex flex-col">
                             <label className="text-[10px] text-[#5a8090] tracking-widest uppercase mb-1">Target Platform</label>
-                            <select 
-                                value={platform} 
+                            <select
+                                value={platform}
                                 onChange={handlePlatformChange}
                                 className="bg-[#03070c] border border-[#00f0ff]/30 text-[#00f0ff] text-xs py-1.5 px-3 uppercase tracking-wider outline-none focus:border-[#00f0ff]/80 transition-colors cursor-pointer"
                             >
@@ -148,8 +146,8 @@ function CodeCheaterAgent({ sessionId }) {
                             onClick={handleStopTyping}
                             disabled={!isActive}
                             className={`px-4 py-2 border text-xs font-bold tracking-widest uppercase transition-all duration-300
-                                ${!isActive 
-                                    ? 'border-gray-800 text-gray-700 cursor-not-allowed bg-transparent' 
+                                ${!isActive
+                                    ? 'border-gray-800 text-gray-700 cursor-not-allowed bg-transparent'
                                     : 'border-red-500/50 text-red-500 hover:bg-red-500/10 hover:shadow-[0_0_15px_rgba(255,0,0,0.2)] bg-transparent cursor-pointer'
                                 }`}
                         >
@@ -167,7 +165,7 @@ function CodeCheaterAgent({ sessionId }) {
                                         : 'border-[#00f0ff] text-[#00f0ff] hover:bg-[#00f0ff]/10 hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] bg-transparent cursor-pointer'
                                 }`}
                         >
-                            {isLoading ? '[ INITIALIZING... ]' : isActive ? '[ DAEMON RUNNING ]' : 'START DAEMON'}
+                            {isLoading ? '[ INITIALIZING... ]' : isActive ? '[ Agent RUNNING ]' : 'START Agent'}
                         </button>
                     </div>
                 </div>
@@ -178,8 +176,8 @@ function CodeCheaterAgent({ sessionId }) {
                     <div className="relative z-20">
                         {logs.map((log, index) => (
                             <div key={index} className={`mb-1.5 ${log.includes('✓') ? 'text-[#00ffcc]' :
-                                    log.includes('✕') || log.includes('ABORT') ? 'text-[#ff3366]' :
-                                        'text-[#4a7080]'
+                                log.includes('✕') || log.includes('ABORT') ? 'text-[#ff3366]' :
+                                    'text-[#4a7080]'
                                 }`}>
                                 <span className="opacity-50 mr-2">&gt;</span> {log}
                             </div>

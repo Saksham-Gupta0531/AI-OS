@@ -33,24 +33,7 @@ function Sidebar({ onNewChat }) {
                         <SquarePen className="nav-icon" />
                         {!collapsed && <span>New Chat</span>}
                     </div>
-                    <div className="nav-item" title="Search Chats" style={{ cursor: 'pointer' }}>
-                        <Search className="nav-icon" />
-                        {!collapsed && <span>Search Chats</span>}
-                    </div>
                 </nav>
-
-                <div className="sidebar-bottom">
-                    <div className="sidebar-divider" />
-                    <div className="nav-item " title="Settings" style={{ cursor: 'pointer' }}>
-                        <User className="nav-icon" />
-                        {!collapsed && <span>Siddharth</span>}
-                    </div>
-                    <div className="nav-item settings-item" title="Settings" style={{ cursor: 'pointer' }}>
-                        <Settings className="nav-icon" />
-                        {!collapsed && <span>Settings & Help</span>}
-                    </div>
-                </div>
-
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default function PackageCard({ data, onClick }) {
+  
   return (
     <div 
       className="group relative flex-none w-[280px] bg-[#1a1a1a]/80 backdrop-blur-md border border-gray-700 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-2 hover:border-[#FF5A06] hover:shadow-[0_10px_30px_rgba(255,90,6,0.25)] flex flex-col snap-start"

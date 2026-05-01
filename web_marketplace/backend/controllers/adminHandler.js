@@ -3,6 +3,7 @@ import Agent from '../model/Agent.js'
 
 export async function handleTotalUser(req, res) {
     try {
+        
         const users = await User.find({})
 
         const totalUsers = users.length;
