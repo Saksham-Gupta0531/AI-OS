@@ -1,25 +1,25 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './Home/Home';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Home from './Home/Home'
+import CursorEffect from './Cursor/CursorEffect'
 import PackagesPage from './Packages/PackagesPage';
-import LoginPage from './Auth/LoginPage';
+import LoginPage from './Auth/LoginPage.jsx'
+import Admin from './Admin/Admin.jsx';
+import { Toaster } from "react-hot-toast";
 
-// New Docs Imports
-import DocsLanding from './Docs/DocsLanding';
-import DocsLayout from './Docs/DocsLayout';
-
-export default function App() {
+function App() {
   return (
-    <BrowserRouter>
+    <Router>
+      <CursorEffect />
+      <Toaster position="top-right" reverseOrder={false} />
+
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path='/' element={<Home />} />
         <Route path="/packages" element={<PackagesPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        
-        {/* Docs Routing */}
-        <Route path="/docs" element={<DocsLanding />} />
-        <Route path="/docs/:categoryId" element={<DocsLayout />} />
-        <Route path="/docs/:categoryId/:articleId" element={<DocsLayout />} />
+        <Route path="/authentication" element={<LoginPage />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
-    </BrowserRouter>
-  );
+    </Router>
+  )
 }
+
+export default App

@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from kernel.tools.window_tools import WindowManager
+from core_service.src.kernel.tools.Common.window_tools import WindowManager
 
 ctk.set_appearance_mode("Dark")
 ctk.set_default_color_theme("blue")
